@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 16
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ALL_BUILD", "ALL_BUILD.vcxproj", "{AEA90817-46FF-3CBE-9584-B0D82E7A92AA}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -41,6 +41,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "protoc", "protoc.vcxproj", 
 		{1A60BEF6-AF78-3E91-B9DB-BC41A3BB8A52} = {1A60BEF6-AF78-3E91-B9DB-BC41A3BB8A52}
 		{F277E7DE-735A-30EC-9588-076A3AFC83B9} = {F277E7DE-735A-30EC-9588-076A3AFC83B9}
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FB002FF5-7991-4110-8718-E4932D6DE3F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "protoc-gen-cs", "src\protoc-gen-cs\protoc-gen-cs.csproj", "{37CDFA38-F77E-4E29-A95A-FE046C810795}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,10 +106,21 @@ Global
 		{1937CF1D-9690-322C-9301-DC68F2692736}.MinSizeRel|Win32.Build.0 = MinSizeRel|Win32
 		{1937CF1D-9690-322C-9301-DC68F2692736}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
 		{1937CF1D-9690-322C-9301-DC68F2692736}.RelWithDebInfo|Win32.Build.0 = RelWithDebInfo|Win32
+		{37CDFA38-F77E-4E29-A95A-FE046C810795}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{37CDFA38-F77E-4E29-A95A-FE046C810795}.Debug|Win32.Build.0 = Debug|Any CPU
+		{37CDFA38-F77E-4E29-A95A-FE046C810795}.Release|Win32.ActiveCfg = Release|Any CPU
+		{37CDFA38-F77E-4E29-A95A-FE046C810795}.Release|Win32.Build.0 = Release|Any CPU
+		{37CDFA38-F77E-4E29-A95A-FE046C810795}.MinSizeRel|Win32.ActiveCfg = Debug|Any CPU
+		{37CDFA38-F77E-4E29-A95A-FE046C810795}.MinSizeRel|Win32.Build.0 = Debug|Any CPU
+		{37CDFA38-F77E-4E29-A95A-FE046C810795}.RelWithDebInfo|Win32.ActiveCfg = Debug|Any CPU
+		{37CDFA38-F77E-4E29-A95A-FE046C810795}.RelWithDebInfo|Win32.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8CAF78FD-9F3F-3F22-9A57-D9AAB5FA506B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{37CDFA38-F77E-4E29-A95A-FE046C810795} = {FB002FF5-7991-4110-8718-E4932D6DE3F4}
 	EndGlobalSection
 EndGlobal
