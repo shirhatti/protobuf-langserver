@@ -1,26 +1,26 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { ProtoLogger } from './ProtoLogger';
+import { Trace } from 'vscode-languageclient';
+import { ProtoLanguageServerClient } from './ProtoLanguageServerClient';
+import { resolveLanguageServerPath } from './ResolveLanguageServerPath';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
+	const verbosity = Trace.Messages;
+	const logger = new ProtoLogger(verbosity);
+	const languageServerPath = resolveLanguageServerPath();
+	const protoConfigSection = vscode.workspace.getConfiguration('proto');
+	const debugLanguageServer = protoConfigSection.get<boolean>('debug');
+	const debug = debugLanguageServer ? debugLanguageServer : false;
+	const languageServerClient = new ProtoLanguageServerClient(languageServerPath, debug, logger);
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-		console.log('Congratulations, your extension "protobuflab" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('extension.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World!');
+	languageServerClient.onStart(() => {
+		// Once the language server is started this will be called, it's where we can register all of our
+		// bits with VSCode for them to function properly.
 	});
 
-	context.subscriptions.push(disposable);
+	await languageServerClient.start();
+
+	context.subscriptions.push(languageServerClient);
 }
 
 // this method is called when your extension is deactivated

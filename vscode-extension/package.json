@@ -1,8 +1,9 @@
 {
-	"name": "protobuflab",
-	"displayName": "protobuflab",
+	"name": "protobuf",
+	"displayName": "Protobuflab",
 	"description": "An extension to enable quality editing of .proto files.",
 	"version": "0.0.1",
+	"publisher": "protobuflab",
 	"engines": {
 		"vscode": "^1.36.0"
 	},
@@ -10,7 +11,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.helloWorld"
+		"onCommand:extension.helloWorld",
+		"workspaceContains:**/*.proto"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -34,5 +36,8 @@
 		"tslint": "^5.12.1",
 		"@types/node": "^10.12.21",
 		"@types/mocha": "^2.2.42"
+	},
+	"dependencies": {
+		"vscode-languageclient": "5.2.1"
 	}
 }
