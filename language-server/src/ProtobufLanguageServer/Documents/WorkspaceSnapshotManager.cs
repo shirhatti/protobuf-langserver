@@ -5,30 +5,46 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using System.Collections.Immutable;
 
 namespace ProtobufLanguageServer.Documents
 {
-    public class ProjectSnapshotManager
+    internal class WorkspaceSnapshotManager
     {
-        public ProjectSnapshotManager(WorkspaceSnapshot workspace)
+        public WorkspaceSnapshotManager(ForegroundThreadManager threadManager)
         {
-            WorkspaceSnapshot = workspace;
+            _threadManager = threadManager;
         }
 
         public event EventHandler<WorkspaceSnapshotChangeEventArgs> Changed;
 
-        private HashSet<string> _openFiles = new HashSet<string>();
+        private ForegroundThreadManager _threadManager;
+
+        private HashSet<string> _openFiles = new HashSet<string>(FilePathComparer.Instance);
 
         public bool IsDocumentOpen(string documentFilePath)
         {
             return _openFiles.Contains(documentFilePath);
         }
 
-        public Workspace Workspace {get; set;}
+        public WorkspaceSnapshot WorkspaceSnapshot {
+            get {
+                _threadManager.AssertForegroundThread();
+                if(_workspaceSnapshot == null)
+                {
+                    _workspaceSnapshot = new WorkspaceSnapshot(VersionStamp.Default, ImmutableDictionary<string, DocumentSnapshot>.Empty);
+                }
+                return _workspaceSnapshot;
+            }
+            set{
+                _threadManager.AssertForegroundThread();
+                _workspaceSnapshot = value;
+            }
+        }
 
-        public WorkspaceSnapshot WorkspaceSnapshot {get; set;}
+        private WorkspaceSnapshot _workspaceSnapshot;
 
-        public async Task DocumentAdded(string documentFilePath, TextLoader textLoader)
+        public void DocumentAdded(string documentFilePath, TextLoader textLoader)
         {
             if (documentFilePath == null)
             {
@@ -40,11 +56,17 @@ namespace ProtobufLanguageServer.Documents
                 throw new ArgumentNullException(nameof(textLoader));
             }
 
+            _threadManager.AssertForegroundThread();
+
+            var oldWorkspaceSnapshot = WorkspaceSnapshot;
+
             var newVersion = WorkspaceSnapshot.Version.GetNewerVersion();
-            var textAndVersion = await textLoader.LoadTextAndVersionAsync(Workspace, null, CancellationToken.None);
-            var docSnapshot = new DocumentSnapshot(documentFilePath, 0, VersionStamp.Default, textAndVersion.Text);
+            var docSnapshot = new DocumentSnapshot(documentFilePath, 0, VersionStamp.Default, textLoader);
             var newDocs = WorkspaceSnapshot.Documents.Add(documentFilePath, docSnapshot);
             WorkspaceSnapshot = new WorkspaceSnapshot(newVersion, newDocs);
+
+            NotifyListeners(new WorkspaceSnapshotChangeEventArgs(oldWorkspaceSnapshot, WorkspaceSnapshot, ProjectChangeKind.DocumentAdded));
+            NotifyListeners(new WorkspaceSnapshotChangeEventArgs(oldWorkspaceSnapshot, WorkspaceSnapshot, ProjectChangeKind.DocumentChanged));
         }
 
         public void DocumentChanged(string documentFilePath, SourceText sourceText, long textVersion)
@@ -59,6 +81,10 @@ namespace ProtobufLanguageServer.Documents
                 throw new ArgumentNullException(nameof(sourceText));
             }
 
+            _threadManager.AssertForegroundThread();
+
+            var oldWorkspaceSnapshot = WorkspaceSnapshot;
+
             var newVersion = WorkspaceSnapshot.Version.GetNewerVersion();
             Debug.Assert(WorkspaceSnapshot.Documents.ContainsKey(documentFilePath));
             var docVersion = WorkspaceSnapshot.Documents[documentFilePath].DocumentVersion.GetNewerVersion();
@@ -66,6 +92,8 @@ namespace ProtobufLanguageServer.Documents
             var newDocs = WorkspaceSnapshot.Documents.SetItem(documentFilePath, docSnapshot);
 
             WorkspaceSnapshot = new WorkspaceSnapshot(newVersion, newDocs);
+
+            NotifyListeners(new WorkspaceSnapshotChangeEventArgs(oldWorkspaceSnapshot, WorkspaceSnapshot, ProjectChangeKind.DocumentChanged));
         }
 
         public void DocumentRemoved(string documentFilePath)
@@ -75,9 +103,15 @@ namespace ProtobufLanguageServer.Documents
                 throw new ArgumentNullException(nameof(documentFilePath));
             }
 
+            _threadManager.AssertForegroundThread();
+
+            var oldWorkspaceSnapshot = WorkspaceSnapshot;
             var newDocs = WorkspaceSnapshot.Documents.Remove(documentFilePath);
             var newVersion = WorkspaceSnapshot.Version.GetNewerVersion();
             WorkspaceSnapshot = new WorkspaceSnapshot(newVersion, newDocs);
+
+            NotifyListeners(new WorkspaceSnapshotChangeEventArgs(oldWorkspaceSnapshot, WorkspaceSnapshot, ProjectChangeKind.DocumentRemoved));
+            NotifyListeners(new WorkspaceSnapshotChangeEventArgs(oldWorkspaceSnapshot, WorkspaceSnapshot, ProjectChangeKind.DocumentChanged));
         }
 
         public void DocumentOpened(string documentFilePath, long textVersion, SourceText sourceText)
@@ -92,23 +126,44 @@ namespace ProtobufLanguageServer.Documents
                 throw new ArgumentNullException(nameof(sourceText));
             }
 
+            _threadManager.AssertForegroundThread();
+
+            var oldWorkspaceSnapshot = WorkspaceSnapshot;
+
             _openFiles.Add(documentFilePath);
             var stamp = VersionStamp.Default;
             var docSnapshot = new DocumentSnapshot(documentFilePath, textVersion, stamp, sourceText);
             var newDocs = WorkspaceSnapshot.Documents.SetItem(documentFilePath, docSnapshot);
             var newVersion = WorkspaceSnapshot.Version.GetNewerVersion();
             WorkspaceSnapshot = new WorkspaceSnapshot(newVersion, newDocs);
+        
+            NotifyListeners(new WorkspaceSnapshotChangeEventArgs(oldWorkspaceSnapshot, WorkspaceSnapshot, documentFilePath, ProjectChangeKind.DocumentChanged));
         }
 
-        public async Task DocumentClosed(string documentFilePath, long textVersion, TextLoader textLoader)
+        public void DocumentClosed(string documentFilePath, long textVersion, TextLoader textLoader)
         {
-            var textAndVersion = await textLoader.LoadTextAndVersionAsync(Workspace, null, CancellationToken.None);
+            _threadManager.AssertForegroundThread();
             _openFiles.Remove(documentFilePath);
-            
-            var docSnapshot = new DocumentSnapshot(documentFilePath, textVersion, textAndVersion.Version, textLoader);
-            var newDocs = WorkspaceSnapshot.Documents.SetItem(documentFilePath, docSnapshot);
+
+            var oldWorkspaceSnapshot = WorkspaceSnapshot;
+            var oldDocSnapshot = WorkspaceSnapshot.Documents[documentFilePath];
+            var newDocSnapshot = new DocumentSnapshot(documentFilePath, textVersion, oldDocSnapshot.DocumentVersion.GetNewerVersion(), textLoader);
+            var newDocs = WorkspaceSnapshot.Documents.SetItem(documentFilePath, newDocSnapshot);
             var newVersion = WorkspaceSnapshot.Version.GetNewerVersion();
             WorkspaceSnapshot = new WorkspaceSnapshot(newVersion, newDocs);
+
+            NotifyListeners(new WorkspaceSnapshotChangeEventArgs(oldWorkspaceSnapshot, WorkspaceSnapshot, documentFilePath, ProjectChangeKind.DocumentChanged));
+        }
+
+        protected virtual void NotifyListeners(WorkspaceSnapshotChangeEventArgs e)
+        {
+            _threadManager.AssertForegroundThread();
+
+            var handler = Changed;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
         }
     }
 }

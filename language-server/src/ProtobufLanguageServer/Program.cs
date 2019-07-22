@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using ProtobufLanguageServer.Documents;
 
 namespace ProtobufLanguageServer
 {
@@ -52,6 +53,7 @@ namespace ProtobufLanguageServer
                     .WithServices(services =>
                     {
                         services.AddSingleton<ForegroundThreadManager>();
+                        services.AddSingleton<WorkspaceSnapshotManager>();
                     }));
 
             var languageServer = (LanguageServer)server;

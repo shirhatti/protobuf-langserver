@@ -1,8 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,6 +17,23 @@ namespace ProtobufLanguageServer
         public TaskScheduler ForegroundScheduler { get; } = ForegroundTaskScheduler.Instance;
 
         public TaskScheduler BackgroundScheduler { get; } = TaskScheduler.Default;
+
+        public virtual void AssertForegroundThread([CallerMemberName] string caller = null)
+        {
+            if (!IsForegroundThread)
+            {
+                throw new InvalidOperationException($"{caller} was not on the foreground thread.");
+            }
+        }
+
+        public virtual void AssertBackgroundThread([CallerMemberName] string caller = null)
+        {
+            if (IsForegroundThread)
+            {
+                caller = $"'{caller}'";
+                throw new InvalidOperationException($"{caller} was not on the background thread.");
+            }
+        }
 
         internal class ForegroundTaskScheduler : TaskScheduler
         {
