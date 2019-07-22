@@ -15,13 +15,6 @@ namespace ProtobufLanguageServer
     {
         private readonly ILanguageServer _router;
 
-        private readonly DocumentSelector _documentSelector = new DocumentSelector(
-            new DocumentFilter()
-            {
-                Pattern = "**/*.proto"
-            }
-        );
-
         public TextDocumentSynchronizationEndpoint(ILanguageServer router)
         {
             _router = router ?? throw new ArgumentNullException(nameof(router));
@@ -80,7 +73,7 @@ namespace ProtobufLanguageServer
         {
             return new TextDocumentChangeRegistrationOptions()
             {
-                DocumentSelector = _documentSelector,
+                DocumentSelector = ProtoDefaults.Selector,
                 SyncKind = Change
             };
         }
@@ -89,7 +82,7 @@ namespace ProtobufLanguageServer
         {
             return new TextDocumentRegistrationOptions()
             {
-                DocumentSelector = _documentSelector,
+                DocumentSelector = ProtoDefaults.Selector,
             };
         }
 
@@ -97,7 +90,7 @@ namespace ProtobufLanguageServer
         {
             return new TextDocumentSaveRegistrationOptions()
             {
-                DocumentSelector = _documentSelector,
+                DocumentSelector = ProtoDefaults.Selector,
                 IncludeText = true
             };
         }

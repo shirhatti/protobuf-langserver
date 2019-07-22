@@ -47,6 +47,7 @@ namespace ProtobufLanguageServer
 
                     // We're adding a new endpoint that will handle a specific set of language server features.
                     .WithHandler<TextDocumentSynchronizationEndpoint>()
+                    .WithHandler<ProtoCompletionEndpoint>()
                     .WithServices(services =>
                     {
                         services.AddSingleton<ForegroundThreadManager>();

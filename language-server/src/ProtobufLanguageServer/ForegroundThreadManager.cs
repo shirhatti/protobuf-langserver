@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ProtobufLanguageServer
 {
-    internal class ForegroundThreadManager
+    public class ForegroundThreadManager
     {
         public bool IsForegroundThread => Thread.CurrentThread.ManagedThreadId == ForegroundTaskScheduler.Instance.ForegroundThreadId;
 
