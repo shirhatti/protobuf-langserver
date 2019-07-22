@@ -42,10 +42,13 @@ namespace ProtobufLanguageServer
             });
 
             var document = await Task.Factory.StartNew(() => 
-            {
-                _snapshotManager.TryResolveDocument(notification.TextDocument.Uri.AbsolutePath, out var documentSnapshot);
-                return documentSnapshot;
-            });
+                {
+                    _snapshotManager.TryResolveDocument(notification.TextDocument.Uri.AbsolutePath, out var documentSnapshot);
+                    return documentSnapshot;
+                }, 
+                CancellationToken.None,
+                TaskCreationOptions.None,
+                _threadManager.ForegroundScheduler);
 
             var sourceText = await document.GetTextAsync();
             sourceText = ApplyContentChanges(notification.ContentChanges, sourceText);
