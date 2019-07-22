@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using OmniSharp.Extensions.LanguageServer.Server;
 using System;
 using System.Diagnostics;
@@ -48,7 +49,7 @@ namespace ProtobufLanguageServer
                     .WithHandler<TextDocumentSynchronizationEndpoint>()
                     .WithServices(services =>
                     {
-                        // Register any custom services here
+                        services.AddSingleton<ForegroundThreadManager>();
                     }));
 
             var languageServer = (LanguageServer)server;
