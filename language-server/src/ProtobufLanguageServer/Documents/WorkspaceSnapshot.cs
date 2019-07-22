@@ -1,12 +1,13 @@
 using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace ProtobufLanguageServer.Documents
 {
     public class WorkspaceSnapshot
     {
-        public WorkspaceSnapshot(VersionStamp version, IReadOnlyList<DocumentSnapshot> documents)
+        public WorkspaceSnapshot(VersionStamp version, ImmutableDictionary<string, DocumentSnapshot> documents)
         {
             Version = version;
             Documents = documents;
@@ -14,6 +15,6 @@ namespace ProtobufLanguageServer.Documents
 
         public VersionStamp Version {get;}
 
-        public IReadOnlyList<DocumentSnapshot> Documents {get;}
+        public ImmutableDictionary<string, DocumentSnapshot> Documents {get;}
     }
 }
