@@ -1,7 +1,7 @@
-CMakeFiles/protoc.dir
-CMakeFiles/libprotobuf-lite.dir
-CMakeFiles/libprotoc.dir
-CMakeFiles/libprotobuf.dir
-CMakeFiles/INSTALL.dir
-CMakeFiles/ALL_BUILD.dir
-CMakeFiles/ZERO_CHECK.dir
+C:/gh/protobuf-langserver/protoc/CMakeFiles/protoc.dir
+C:/gh/protobuf-langserver/protoc/CMakeFiles/libprotobuf-lite.dir
+C:/gh/protobuf-langserver/protoc/CMakeFiles/libprotoc.dir
+C:/gh/protobuf-langserver/protoc/CMakeFiles/libprotobuf.dir
+C:/gh/protobuf-langserver/protoc/CMakeFiles/INSTALL.dir
+C:/gh/protobuf-langserver/protoc/CMakeFiles/ALL_BUILD.dir
+C:/gh/protobuf-langserver/protoc/CMakeFiles/ZERO_CHECK.dir

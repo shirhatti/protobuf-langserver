@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="protobuf\src\google\protobuf\compiler\main.cc">
+    <ClCompile Include="C:\gh\protobuf-langserver\protoc\protobuf\src\google\protobuf\compiler\main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="protobuf\cmake\CMakeLists.txt" />
+    <CustomBuild Include="C:\gh\protobuf-langserver\protoc\protobuf\cmake\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="version.rc">
+    <ResourceCompile Include="C:\gh\protobuf-langserver\protoc\version.rc">
       <Filter>Source Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{F87259C6-96A2-30E4-ADFD-3E31D4BD62DF}</UniqueIdentifier>
+      <UniqueIdentifier>{3EE29C05-76F4-3908-99C6-72398D465975}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

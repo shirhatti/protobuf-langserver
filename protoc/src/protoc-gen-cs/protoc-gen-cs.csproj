@@ -16,6 +16,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="*" />
+    
     <Content Include="../../$(Configuration)/libminiprotoc.dll" CopyToOutputDirectory="Always" />
     <Content Include="../../$(Configuration)/libminiprotoc.pdb" CopyToOutputDirectory="Always" />
     <Content Include="../../$(Configuration)/*.lib" CopyToOutputDirectory="Always" />
