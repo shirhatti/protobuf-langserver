@@ -1,7 +1,9 @@
 using System.Threading.Tasks;
+using System.Threading;
 using System;
 using Microsoft.CodeAnalysis.Text;
 using ProtobufLanguageServer.Syntax;
+using Microsoft.CodeAnalysis;
 
 namespace ProtobufLanguageServer.Documents
 {
@@ -9,40 +11,48 @@ namespace ProtobufLanguageServer.Documents
     {
         public DocumentSnapshot(
             string path,
-            long version,
-            Func<Task<SourceText>> loader
-        )
+            long textVersion,
+            Microsoft.CodeAnalysis.VersionStamp stamp,
+            TextLoader loader)
         {
             Path = path;
-            Version = version;
+            TextVersion = textVersion;
+            DocumentVersion = stamp;
             _loader = loader;
         }
 
-        public DocumentSnapshot(string path, long version, SourceText text)
+        public DocumentSnapshot(
+            string path,
+            long textVersion,
+            Microsoft.CodeAnalysis.VersionStamp stamp,
+            SourceText text)
         {
-            path = Path;
-            version = Version;
+            Path = path;
+            TextVersion = textVersion;
             _text = text;
+            DocumentVersion = stamp;
         }
 
         public string Path {get;}
-        public long Version {get;}
+        public long TextVersion {get;}
+        public Microsoft.CodeAnalysis.VersionStamp DocumentVersion {get;} 
 
-        private Func<Task<SourceText>> _loader;
+        private TextLoader _loader;
         private SourceText _text = null;
 
-        public async Task<SourceText> GetTextAsync()
+        public Task<SourceText> GetTextAsync()
         {
             if(_text == null)
             {
-                return await _loader();
+                throw new NotImplementedException();
+                //return (await _loader.LoadTextAndVersionAsync(Workspace, null, CancellationToken.None));
             }
             else{
-                return _text;
+                return Task.FromResult(_text);
             }
         }
 
-        public Task<SyntaxTree> GetSyntaxTreeAsync()
+        public Task<ProtobufLanguageServer.Syntax.SyntaxTree> GetSyntaxTreeAsync()
         {
             throw new NotImplementedException();
         }
