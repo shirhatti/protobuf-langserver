@@ -73,7 +73,7 @@ private:
 		std::ostream& out) {
 		// Print full path when running under MSVS
 		std::string dfile;
-		if (format_ == CommandLineInterface::ERROR_FORMAT_MSVS && tree_ != NULL &&
+		if (format_ == ERROR_FORMAT_MSVS && tree_ != NULL &&
 			tree_->VirtualFileToDiskFile(filename, &dfile)) {
 			out << dfile;
 		}
@@ -86,10 +86,10 @@ private:
 		if (line != -1) {
 			// Allow for both GCC- and Visual-Studio-compatible output.
 			switch (format_) {
-			case CommandLineInterface::ERROR_FORMAT_GCC:
+			case ERROR_FORMAT_GCC:
 				out << ":" << (line + 1) << ":" << (column + 1);
 				break;
-			case CommandLineInterface::ERROR_FORMAT_MSVS:
+			case ERROR_FORMAT_MSVS:
 				out << "(" << (line + 1) << ") : " << type
 					<< " in column=" << (column + 1);
 				break;
@@ -110,41 +110,48 @@ private:
 };
 
 
-bool generate()
+bool generate(void* filePtr, void* fileDescriptor)
 {
-	std::vector<const FileDescriptor*> parsed_files;
-	std::unique_ptr<DiskSourceTree> disk_source_tree;
-	std::unique_ptr<ErrorPrinter> error_collector;
 	std::unique_ptr<DescriptorPool> descriptor_pool;
-	std::unique_ptr<SimpleDescriptorDatabase> descriptor_set_in_database;
-	std::unique_ptr<SourceTreeDescriptorDatabase> source_tree_database;
 
-	std::vector<std::string> input_files;
+	std::string file = std::string((char*)filePtr);
 
-	descriptor_set_in_database.reset(new SimpleDescriptorDatabase());
-	disk_source_tree.reset(new DiskSourceTree());
-	error_collector.reset(
-		new ErrorPrinter(ERROR_FORMAT_MSVS, disk_source_tree.get()));
-	source_tree_database.reset(new SourceTreeDescriptorDatabase(
-		disk_source_tree.get(), descriptor_set_in_database.get()));
+	return true;
+	//descriptor_pool = 
 
-	for (const auto& input_file : input_files) {
+	//std::vector<const FileDescriptor*> parsed_files;
+	//std::unique_ptr<DiskSourceTree> disk_source_tree;
+	//std::unique_ptr<ErrorPrinter> error_collector;
+	//std::unique_ptr<DescriptorPool> descriptor_pool;
+	//std::unique_ptr<SimpleDescriptorDatabase> descriptor_set_in_database;
+	//std::unique_ptr<SourceTreeDescriptorDatabase> source_tree_database;
 
-	}
+	//std::vector<std::string> input_files;
 
-	return false;
+	//descriptor_set_in_database.reset(new SimpleDescriptorDatabase());
+	//disk_source_tree.reset(new DiskSourceTree());
+	//error_collector.reset(
+	//	new ErrorPrinter(ERROR_FORMAT_MSVS, disk_source_tree.get()));
+	//source_tree_database.reset(new SourceTreeDescriptorDatabase(
+	//	disk_source_tree.get(), descriptor_set_in_database.get()));
+
+	//for (const auto& input_file : input_files) {
+
+	//}
+
+	//return false;
 	//NoopErrorCollector noop_error_collector();
 	//SourceTree* source_tree_;
 	//FileDescriptorProto file_proto;
 	//FileDescriptorProto* file_proto_ptr = &file_proto;
 
 	//// Set up the tokenizer and parser.
-	//std::unique_ptr<io::ZeroCopyInputStream> input(source_tree_->Open("C:\gh\protobuf-langserver\protoc\greet.proto"));
+	//std::unique_ptr<io::ZeroCopyInputStream> input(source_tree_->Open("greet.proto"));
 	//Tokenizer tokenizer(input.get(), (ErrorCollector*)(&noop_error_collector));
 	//Parser parser;
 
 	//// Parse it.
-	//file_proto_ptr->set_name("C:\gh\protobuf-langserver\protoc\greet.proto");
+	//file_proto_ptr->set_name("greet.proto");
 	//bool parse_result = parser.Parse(&tokenizer, file_proto_ptr);
 	//return parse_result;
 };

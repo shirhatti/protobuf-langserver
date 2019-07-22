@@ -15,4 +15,14 @@
     <Content Include="../../$(Configuration)/*.lib" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\protoc-gen-cs\protoc-gen-cs.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="greet.proto">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

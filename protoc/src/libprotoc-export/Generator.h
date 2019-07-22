@@ -6,4 +6,4 @@
 #define GENERATOR_API __declspec(dllimport)
 #endif
 
-extern "C" GENERATOR_API bool generate();
+extern "C" GENERATOR_API bool generate(void*, void*);
