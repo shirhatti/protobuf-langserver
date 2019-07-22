@@ -49,7 +49,7 @@ export class ProtoLanguageServerClient implements vscode.Disposable {
             args.push(serverPath);
         }
 
-        this.logger.logMessage(`Razor language server path: ${serverPath}`);
+        this.logger.logMessage(`Proto language server path: ${serverPath}`);
 
         args.push('-lsp');
         args.push('--logLevel');
@@ -134,7 +134,7 @@ export class ProtoLanguageServerClient implements vscode.Disposable {
     }
 
     public dispose() {
-        this.logger.logMessage('Stopping Razor Language Server.');
+        this.logger.logMessage('Stopping Proto Language Server.');
 
         if (this.startDisposable) {
             this.startDisposable.dispose();
