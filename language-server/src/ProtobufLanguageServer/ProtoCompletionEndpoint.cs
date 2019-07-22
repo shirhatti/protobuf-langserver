@@ -68,20 +68,20 @@ namespace ProtobufLanguageServer
                 TaskCreationOptions.None,
                 _threadManager.BackgroundScheduler);
 
-            throw new NotImplementedException("Do something useful with this syntax tree.");
+            // TODO: Do something useful with this syntax tree.
 
-            // // Provide your completions here
-            // var item1 = new CompletionItem()
-            // {
-            //     Label = "Sample completion item 1",
-            // };
-            // var item2 = new CompletionItem()
-            // {
-            //     Label = "Sample completion item 2",
-            // };
-            // var completionList = new CompletionList(item1, item2);
+            // Provide your completions here
+            var item1 = new CompletionItem()
+            {
+                Label = "Sample completion item 1",
+            };
+            var item2 = new CompletionItem()
+            {
+                Label = "Sample completion item 2",
+            };
+            var completionList = new CompletionList(item1, item2);
             
-            // return Task.FromResult(completionList);
+            return Task.FromResult(completionList);
         }
 
         public Task<CompletionItem> Handle(CompletionItem request, CancellationToken cancellationToken)

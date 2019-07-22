@@ -57,23 +57,23 @@ namespace ProtobufLanguageServer
                 TaskCreationOptions.None,
                 _threadManager.BackgroundScheduler);
 
-            throw new NotImplementedException("Do something useful with this syntax tree.");
+            // TODO: Do something useful with this syntax tree.
 
-            // var location1 = new LocationOrLocationLink(new Location()
-            // {
-            //     Range = new Range(new Position(0, 0), new Position(0, 5)),
-            //     Uri = request.TextDocument.Uri,
-            // });
+            var location1 = new LocationOrLocationLink(new Location()
+            {
+                Range = new Range(new Position(0, 0), new Position(0, 5)),
+                Uri = request.TextDocument.Uri,
+            });
 
-            // var location2 = new LocationOrLocationLink(new Location()
-            // {
-            //     Range = new Range(new Position(0, 7), new Position(0, 11)),
-            //     Uri = request.TextDocument.Uri,
-            // });
+            var location2 = new LocationOrLocationLink(new Location()
+            {
+                Range = new Range(new Position(0, 7), new Position(0, 11)),
+                Uri = request.TextDocument.Uri,
+            });
 
-            // var locations = new LocationOrLocationLinks(location1, location2);
+            var locations = new LocationOrLocationLinks(location1, location2);
 
-            // return Task.FromResult(locations);
+            return Task.FromResult(locations);
         }
 
         public void SetCapability(DefinitionCapability capability)
