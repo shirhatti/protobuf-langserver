@@ -16,6 +16,22 @@
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"languages": [
+			{
+				"id": "protobuf",
+				"extensions": [
+					".proto"
+				],
+				"configuration": "./src/language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "protobuf",
+				"scopeName": "text.protobuf",
+				"path": "./src/syntaxes/protobuf.tmLanguage.json"
+			}
+		],
 		"commands": [
 			{
 				"command": "extension.helloWorld",
