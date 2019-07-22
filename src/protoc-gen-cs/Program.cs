@@ -3,6 +3,7 @@ using Google.ProtocolBuffers.Compiler.PluginProto;
 using Google.ProtocolBuffers.DescriptorProtos;
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Protogen
 {
