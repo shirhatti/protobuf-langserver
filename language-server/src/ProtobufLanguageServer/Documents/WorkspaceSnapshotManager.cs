@@ -1,15 +1,13 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 
 namespace ProtobufLanguageServer.Documents
 {
-    internal class WorkspaceSnapshotManager
+    public class WorkspaceSnapshotManager
     {
         public WorkspaceSnapshotManager(ForegroundThreadManager threadManager)
         {
@@ -43,6 +41,11 @@ namespace ProtobufLanguageServer.Documents
         }
 
         private WorkspaceSnapshot _workspaceSnapshot;
+
+        public bool TryResolveDocument(string documentFilePath, out DocumentSnapshot document)
+        {
+            return _workspaceSnapshot.Documents.TryGetValue(documentFilePath, out document);
+        }
 
         public void DocumentAdded(string documentFilePath, TextLoader textLoader)
         {
@@ -140,14 +143,14 @@ namespace ProtobufLanguageServer.Documents
             NotifyListeners(new WorkspaceSnapshotChangeEventArgs(oldWorkspaceSnapshot, WorkspaceSnapshot, documentFilePath, ProjectChangeKind.DocumentChanged));
         }
 
-        public void DocumentClosed(string documentFilePath, long textVersion, TextLoader textLoader)
+        public void DocumentClosed(string documentFilePath, TextLoader textLoader)
         {
             _threadManager.AssertForegroundThread();
             _openFiles.Remove(documentFilePath);
 
             var oldWorkspaceSnapshot = WorkspaceSnapshot;
             var oldDocSnapshot = WorkspaceSnapshot.Documents[documentFilePath];
-            var newDocSnapshot = new DocumentSnapshot(documentFilePath, textVersion, oldDocSnapshot.DocumentVersion.GetNewerVersion(), textLoader);
+            var newDocSnapshot = new DocumentSnapshot(documentFilePath, -1, oldDocSnapshot.DocumentVersion.GetNewerVersion(), textLoader);
             var newDocs = WorkspaceSnapshot.Documents.SetItem(documentFilePath, newDocSnapshot);
             var newVersion = WorkspaceSnapshot.Version.GetNewerVersion();
             WorkspaceSnapshot = new WorkspaceSnapshot(newVersion, newDocs);
