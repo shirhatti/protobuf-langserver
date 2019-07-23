@@ -16,7 +16,7 @@ public:
 private:
 	void* data;
 	google::protobuf::int64 size;
-	void* currentPosition;
+	google::protobuf::int64 currentPosition;
 
 };
 

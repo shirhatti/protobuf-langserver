@@ -3,6 +3,7 @@
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/compiler/importer.h>
 #include "InMemoryInputStream.h"
+#include <google/protobuf/io/io_win32.h>
 using namespace google::protobuf::compiler;
 
 using namespace google::protobuf;
@@ -110,37 +111,77 @@ private:
 	bool found_errors_;
 };
 
+class SingleFileErrorCollector
+	: public io::ErrorCollector{
+ public:
+  SingleFileErrorCollector(const std::string & filename,
+						   MultiFileErrorCollector * multi_file_error_collector)
+	  : filename_(filename),
+		multi_file_error_collector_(multi_file_error_collector),
+		had_errors_(false) {}
+  ~SingleFileErrorCollector() {}
+
+  bool had_errors() { return had_errors_; }
+
+  // implements ErrorCollector ---------------------------------------
+  void AddError(int line, int column, const std::string & message) override {
+	if (multi_file_error_collector_ != NULL) {
+	  multi_file_error_collector_->AddError(filename_, line, column, message);
+	}
+	had_errors_ = true;
+  }
+
+ private:
+  std::string filename_;
+  MultiFileErrorCollector* multi_file_error_collector_;
+  bool had_errors_;
+};
 
 bool generate(void* file, int64 fileSize, void* fileDescriptor)
 {
+	const std::string& filename = "greet.proto";
 	std::unique_ptr<DescriptorPool> descriptor_pool;
-	InMemoryInputStream* input = new InMemoryInputStream(file, fileSize);
-	std::unique_ptr<io::ZeroCopyInputStream> stream(input);
+	InMemoryInputStream* inputStream = new InMemoryInputStream(file, fileSize);
+	std::unique_ptr<io::ZeroCopyInputStream> input(inputStream);
+	SingleFileErrorCollector file_error_collector(filename, NULL);
+	io::Tokenizer tokenizer(input.get(), &file_error_collector);
 
-	stream->Skip(10);
+	Parser parser;
+	FileDescriptorProto* output = new(fileDescriptor) FileDescriptorProto();
+	return parser.Parse(&tokenizer, output);
 
-	return true;
-	//descriptor_pool = 
-
-	//std::vector<const FileDescriptor*> parsed_files;
 	//std::unique_ptr<DiskSourceTree> disk_source_tree;
 	//std::unique_ptr<ErrorPrinter> error_collector;
 	//std::unique_ptr<DescriptorPool> descriptor_pool;
 	//std::unique_ptr<SimpleDescriptorDatabase> descriptor_set_in_database;
 	//std::unique_ptr<SourceTreeDescriptorDatabase> source_tree_database;
-
-	//std::vector<std::string> input_files;
-
+	//
+	//// Initialize descriptor set to empty. In future we may be passed in a descriptor set
 	//descriptor_set_in_database.reset(new SimpleDescriptorDatabase());
+
 	//disk_source_tree.reset(new DiskSourceTree());
+
+	//// Initialize disk source tree
+	//// TODO AddDefaultProtoPaths. See command_line_interface.c:227
+
+
 	//error_collector.reset(
 	//	new ErrorPrinter(ERROR_FORMAT_MSVS, disk_source_tree.get()));
+
+
 	//source_tree_database.reset(new SourceTreeDescriptorDatabase(
 	//	disk_source_tree.get(), descriptor_set_in_database.get()));
+	//source_tree_database->RecordErrorsTo(error_collector.get());
 
-	//for (const auto& input_file : input_files) {
+	//descriptor_pool.reset(new DescriptorPool(
+	//	source_tree_database.get(),
+	//	source_tree_database->GetValidationErrorCollector()));
 
-	//}
+	//descriptor_pool->EnforceWeakDependencies(true);
+	
+	// TODO: initialize descriptor pool
+
+	return true;
 
 	//return false;
 	//NoopErrorCollector noop_error_collector();
