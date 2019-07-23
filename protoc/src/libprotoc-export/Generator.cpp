@@ -2,6 +2,7 @@
 #include "Generator.h"
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/compiler/importer.h>
+#include "InMemoryInputStream.h"
 using namespace google::protobuf::compiler;
 
 using namespace google::protobuf;
@@ -110,11 +111,13 @@ private:
 };
 
 
-bool generate(void* filePtr, void* fileDescriptor)
+bool generate(void* file, int64 fileSize, void* fileDescriptor)
 {
 	std::unique_ptr<DescriptorPool> descriptor_pool;
+	InMemoryInputStream* input = new InMemoryInputStream(file, fileSize);
+	std::unique_ptr<io::ZeroCopyInputStream> stream(input);
 
-	std::string file = std::string((char*)filePtr);
+	stream->Skip(10);
 
 	return true;
 	//descriptor_pool = 

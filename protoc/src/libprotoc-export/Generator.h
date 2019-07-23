@@ -6,4 +6,6 @@
 #define GENERATOR_API __declspec(dllimport)
 #endif
 
-extern "C" GENERATOR_API bool generate(void*, void*);
+#include <google/protobuf/stubs/port.h>
+
+extern "C" GENERATOR_API bool generate(void*, google::protobuf::int64, void*);

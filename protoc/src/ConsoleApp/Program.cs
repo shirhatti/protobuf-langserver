@@ -21,14 +21,14 @@ namespace ConsoleApp
     class Program
     {
         [DllImport("libminiprotoc.dll")]
-        public static extern bool generate(IntPtr filePtr, IntPtr descriptorProtoPtr);
+        public static extern bool generate(IntPtr file, Int64 fileSize, IntPtr descriptorProtoPtr);
         static void Main(string[] args)
         {
-            string text = File.ReadAllText("greet.proto");
-            using (var inputSlab = new MemoryPoolSlab(Encoding.ASCII.GetBytes(text)))
+            var inputFile = File.ReadAllBytes("greet.proto");
+            using (var inputSlab = new MemoryPoolSlab(inputFile))
             using (var outputSlab = new MemoryPoolSlab(new byte[1000000]))
             {
-                generate(inputSlab.NativePointer, outputSlab.NativePointer);
+                generate(inputSlab.NativePointer, inputFile.Length, outputSlab.NativePointer);
                 var infoList = new List<Info>();
                 var file = FileDescriptorProto.ParseFrom(outputSlab.Array);
                 foreach (var location in file.SourceCodeInfo.LocationList)
