@@ -95,7 +95,7 @@ namespace ProtobufLanguageServer
             });
 
             //TODO: In the future this should probably be a bit more inteligent,
-            // this is assuming we loaded all the data for a completion item on the innitial completion list.
+            // this is assuming we loaded all the data for a completion item on the initial completion list.
             return Task.FromResult(request);
         }
 

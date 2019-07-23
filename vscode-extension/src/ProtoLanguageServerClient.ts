@@ -14,6 +14,7 @@ import {
 } from 'vscode-languageclient/lib/main';
 import { ProtoLogger } from './ProtoLogger';
 import { EventEmitter } from 'events';
+import { listeners } from 'cluster';
 
 const events = {
     ServerStart: 'ServerStart',
@@ -25,6 +26,7 @@ export class ProtoLanguageServerClient implements vscode.Disposable {
     private serverOptions: ServerOptions;
     private client: LanguageClient;
     private startDisposable: vscode.Disposable | undefined;
+    private onStartedListeners: Array<() => Promise<any>> = [];
     private isStarted: boolean;
     private startHandle: Promise<void> | undefined;
     private eventBus: EventEmitter;
@@ -73,11 +75,23 @@ export class ProtoLanguageServerClient implements vscode.Disposable {
         this.eventBus = new EventEmitter();
     }
 
+    public onStarted(listener: () => Promise<any>) {
+        this.onStartedListeners.push(listener);
+    }
+
     public onStart(listener: () => any) {
         this.eventBus.addListener(events.ServerStart, listener);
 
         const disposable = new vscode.Disposable(() =>
             this.eventBus.removeListener(events.ServerStart, listener));
+        return disposable;
+    }
+
+    public onStop(listener: () => any) {
+        this.eventBus.addListener(events.ServerStop, listener);
+
+        const disposable = new vscode.Disposable(() =>
+            this.eventBus.removeListener(events.ServerStop, listener));
         return disposable;
     }
 
@@ -102,6 +116,10 @@ export class ProtoLanguageServerClient implements vscode.Disposable {
                 this.isStarted = true;
                 this.logger.logMessage('Server started and ready!');
                 this.eventBus.emit(events.ServerStart);
+
+                for(const listener of this.onStartedListeners) {
+                    await listener();
+                }
 
                 // Succesfully started, notify listeners.
                 resolve();

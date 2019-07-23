@@ -14,7 +14,7 @@ using ILanguageServer = OmniSharp.Extensions.LanguageServer.Server.ILanguageServ
 
 namespace ProtobufLanguageServer
 {
-    public class TextDocumentSynchronizationEndpoint : ITextDocumentSyncHandler
+    public class TextDocumentSynchronizationEndpoint : ITextDocumentSyncHandler, IProtoAddDocumentHandler, IProtoRemoveDocumentHandler
     {
         private readonly ILanguageServer _router;
         private readonly WorkspaceSnapshotManager _snapshotManager;
@@ -108,6 +108,41 @@ namespace ProtobufLanguageServer
             });
 
             return Unit.Task;
+        }
+
+        public async Task<Unit> Handle(RemoveDocumentParams request, CancellationToken cancellationToken)
+        {
+            _router.Window.LogMessage(new LogMessageParams()
+            {
+                Type = MessageType.Log,
+                Message = "Proto file removed: " + request.FilePath
+            });
+            _threadManager.AssertBackgroundThread();
+
+            await Task.Factory.StartNew(
+                () => _snapshotManager.DocumentRemoved(request.FilePath),
+                CancellationToken.None,
+                TaskCreationOptions.None,
+                _threadManager.ForegroundScheduler);
+            
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(AddDocumentParams request, CancellationToken cancellationToken)
+        {
+            _router.Window.LogMessage(new LogMessageParams(){
+                Type = MessageType.Log,
+                Message = "Proto file added: " + request.FilePath
+            });
+            _threadManager.AssertBackgroundThread();
+
+            await Task.Factory.StartNew(
+                () => _snapshotManager.DocumentAdded(request.FilePath, new ThrowTextLoader()),
+                CancellationToken.None,
+                TaskCreationOptions.None,
+                _threadManager.ForegroundScheduler);
+
+            return Unit.Value;
         }
 
         public void SetCapability(SynchronizationCapability capability)

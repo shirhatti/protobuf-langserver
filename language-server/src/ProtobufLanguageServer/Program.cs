@@ -38,6 +38,8 @@ namespace ProtobufLanguageServer
                 }
             }
 
+            var threadManager = new ForegroundThreadManager();
+            var snapshotManager = new WorkspaceSnapshotManager(threadManager);
             var server = await LanguageServer.From(options =>
                 options
                     .WithInput(Console.OpenStandardInput())
@@ -52,9 +54,15 @@ namespace ProtobufLanguageServer
                     .WithHandler<ProtoDefinitionEndpoint>()
                     .WithServices(services =>
                     {
-                        services.AddSingleton<ForegroundThreadManager>();
-                        services.AddSingleton<WorkspaceSnapshotManager>();
+                        services.AddSingleton<ForegroundThreadManager>(threadManager);
+                        services.AddSingleton<WorkspaceSnapshotManager>(snapshotManager);
                     }));
+
+            await Task.Factory.StartNew(
+                () => snapshotManager.InitializeAsync(server),
+                CancellationToken.None,
+                TaskCreationOptions.None,
+                threadManager.ForegroundScheduler);
 
             var languageServer = (LanguageServer)server;
             languageServer.MinimumLogLevel = logLevel;

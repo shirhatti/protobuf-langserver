@@ -4,11 +4,17 @@ using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
+using OmniSharp.Extensions.LanguageServer.Protocol.Server;
+using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace ProtobufLanguageServer.Documents
 {
     public class WorkspaceSnapshotManager
     {
+        private const string GetAllDocumentsMethod = "getAllDocuments";
+
         public WorkspaceSnapshotManager(ForegroundThreadManager threadManager)
         {
             _threadManager = threadManager;
@@ -19,6 +25,15 @@ namespace ProtobufLanguageServer.Documents
         private ForegroundThreadManager _threadManager;
 
         private HashSet<string> _openFiles = new HashSet<string>(FilePathComparer.Instance);
+
+        public async Task InitializeAsync(ILanguageServer server)
+        {
+            var documents = await server.SendRequest<IEnumerable<TextDocumentItem>>(GetAllDocumentsMethod);
+            foreach (var doc in documents)
+            {
+                this.DocumentAdded(doc.Uri.AbsolutePath, new ThrowTextLoader());
+            }
+        }
 
         public bool IsDocumentOpen(string documentFilePath)
         {
@@ -67,7 +82,7 @@ namespace ProtobufLanguageServer.Documents
 
             var newVersion = WorkspaceSnapshot.Version.GetNewerVersion();
             var docSnapshot = new DocumentSnapshot(documentFilePath, 0, VersionStamp.Default, textLoader);
-            var newDocs = WorkspaceSnapshot.Documents.Add(documentFilePath, docSnapshot);
+            var newDocs = WorkspaceSnapshot.Documents.SetItem(documentFilePath, docSnapshot);
             WorkspaceSnapshot = new WorkspaceSnapshot(newVersion, newDocs);
 
             NotifyListeners(new WorkspaceSnapshotChangeEventArgs(oldWorkspaceSnapshot, WorkspaceSnapshot, ProjectChangeKind.DocumentAdded));
@@ -169,6 +184,29 @@ namespace ProtobufLanguageServer.Documents
             {
                 handler(this, e);
             }
+        }
+    }
+
+    public class StringTextLoader : TextLoader
+    {
+        private string _text;
+        private VersionStamp _version;
+        private string _filePath;
+
+        public StringTextLoader(string text, VersionStamp version, string filePath)
+        {
+            _text = text;
+            _version = version;
+            _filePath = filePath;
+        }
+
+        public override Task<TextAndVersion> LoadTextAndVersionAsync(
+            Workspace workspace,
+            DocumentId documentId,
+            CancellationToken cancellationToken)
+        {
+            var sourceText = SourceText.From(_text);
+            return Task.FromResult(TextAndVersion.Create(sourceText, _version, _filePath));
         }
     }
 }
