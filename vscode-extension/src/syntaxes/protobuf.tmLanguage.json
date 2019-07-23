@@ -93,16 +93,10 @@
           "include": "#multiline_comments"
         },
         {
-          "include": "#meta.enum-declaration.protobuf"
-        },
-        {
-          "include": "#meta.message-declaration.protobuf"
-        },
-        {
-          "include": "#extend_block"
-        },
-        {
           "include": "#map_field"
+        },
+        {
+          "include": "$self"
         }
       ]
     },
@@ -404,7 +398,7 @@
       ]
     },
     "indiv_attribute": {
-      "match": "\\(?([A-Za-z0-9_.]+)\\)?\\s*=\\s*(true|false|\\d+|([A-Z_]+))\\b",
+      "match": "\\(?([A-Za-z0-9_.]+)\\)?\\s*=\\s*(true|false|\\d+|([\\w+]+))\\b",
       "captures": {
         "1": {
           "name": "entity.other.attribute-name.protobuf"
