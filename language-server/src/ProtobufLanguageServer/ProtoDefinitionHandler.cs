@@ -1,11 +1,14 @@
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using ProtobufLanguageServer.Documents;
+using Protogen;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Range = OmniSharp.Extensions.LanguageServer.Protocol.Models.Range;
 
 namespace ProtobufLanguageServer
 {
@@ -43,7 +46,8 @@ namespace ProtobufLanguageServer
             _threadManager.AssertBackgroundThread();
 
             var document = await Task.Factory.StartNew(
-                () => {
+                () =>
+                {
                     _snapshotManager.TryResolveDocument(request.TextDocument.Uri.AbsolutePath, out var doc);
                     return doc;
                 },
@@ -51,29 +55,57 @@ namespace ProtobufLanguageServer
                 TaskCreationOptions.None,
                 _threadManager.ForegroundScheduler);
 
-            var syntaxTree = await Task.Factory.StartNew(
-                async () => await document.GetSyntaxTreeAsync(),
-                CancellationToken.None,
-                TaskCreationOptions.None,
-                _threadManager.BackgroundScheduler);
+            var syntaxTree = await document.GetSyntaxTreeAsync();
 
-            // TODO: Do something useful with this syntax tree.
+            var child = syntaxTree.Root.GetChildNodeAt((int)request.Position.Line, (int)request.Position.Character);
 
-            var location1 = new LocationOrLocationLink(new Location()
+            if (child.Parent.Info.Type == "method" && (child.Info.Type == "input_type" || child.Info.Type == "output_type"))
             {
-                Range = new Range(new Position(0, 0), new Position(0, 5)),
-                Uri = request.TextDocument.Uri,
-            });
+                var declaringTypeNode = FindDeclaringTypeNode(syntaxTree.Root, child.Info.Content);
+                if (declaringTypeNode != null)
+                {
+                    var declaringTypeNodeLocation = new LocationOrLocationLink(
+                        new Location()
+                        {
+                            Range = new Range(
+                                new Position(declaringTypeNode.Info.StartLine, declaringTypeNode.Info.StartCol),
+                                new Position(declaringTypeNode.Info.EndLine, declaringTypeNode.Info.EndCol)),
+                            Uri = request.TextDocument.Uri,
+                        });
+                    var locations = new LocationOrLocationLinks(declaringTypeNodeLocation);
+                    return locations;
+                }
+            }
 
-            var location2 = new LocationOrLocationLink(new Location()
+            var emptyLocations = new LocationOrLocationLinks();
+            return emptyLocations;
+        }
+
+        private Node FindDeclaringTypeNode(Node node, string content)
+        {
+            if (node.Info.Type == "message_type")
             {
-                Range = new Range(new Position(0, 7), new Position(0, 11)),
-                Uri = request.TextDocument.Uri,
-            });
+                var delcaringMessageType = node.Children.FirstOrDefault(c => c.Info.Type == "name" && c.Info.Content == content);
 
-            var locations = new LocationOrLocationLinks(location1, location2);
+                if (delcaringMessageType != null)
+                {
+                    // Found
+                    return delcaringMessageType;
+                }
+            }
 
-            return locations;
+            for (var i = 0; i < node.Children.Count; i++)
+            {
+                var foundNode = FindDeclaringTypeNode(node.Children[i], content);
+
+                if (foundNode != null)
+                {
+                    // Found
+                    return foundNode;
+                }
+            }
+
+            return null;
         }
 
         public void SetCapability(DefinitionCapability capability)

@@ -5,7 +5,7 @@ import * as os from 'os';
 export function resolveLanguageServerPath() {
 	const languageServerDir = path.join(
         __dirname, '..', '..', 'language-server', 'src', 'ProtobufLanguageServer',
-        'bin', 'Debug', 'netcoreapp2.2');
+        'bin', 'Debug', 'netcoreapp3.0');
 
     if (!fs.existsSync(languageServerDir)) {
         throw new Error('The Proto Language Server project has not yet been built - '

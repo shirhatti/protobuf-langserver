@@ -54,7 +54,7 @@ namespace ProtobufLanguageServer.Documents
 
         public Task<ProtobufLanguageServer.Syntax.SyntaxTree> GetSyntaxTreeAsync()
         {
-            var syntaxTree = ProtobufLanguageServer.Syntax.SyntaxTree.Create(Path, _text);
+            var syntaxTree = Syntax.SyntaxTree.Create(Path, _text);
 
             return Task.FromResult(syntaxTree);
         }

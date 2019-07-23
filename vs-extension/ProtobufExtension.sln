@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtobufExtension", "Protob
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProtobufLanguageServer", "..\language-server\src\ProtobufLanguageServer\ProtobufLanguageServer.csproj", "{53F5B971-C63C-4FF9-B422-018EFD761A28}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "..\protoc\src\ConsoleApp\ConsoleApp.csproj", "{48BC753C-1786-4DA3-884A-49E3B97FE8EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{53F5B971-C63C-4FF9-B422-018EFD761A28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53F5B971-C63C-4FF9-B422-018EFD761A28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53F5B971-C63C-4FF9-B422-018EFD761A28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48BC753C-1786-4DA3-884A-49E3B97FE8EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48BC753C-1786-4DA3-884A-49E3B97FE8EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48BC753C-1786-4DA3-884A-49E3B97FE8EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48BC753C-1786-4DA3-884A-49E3B97FE8EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

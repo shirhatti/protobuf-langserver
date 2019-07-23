@@ -4,16 +4,16 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <LangVersion>Latest</LangVersion>
+    <BuildNative>false</BuildNative>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
-  <ItemGroup Condition="$(IsWindows)==true">
+  <ItemGroup Condition="$(IsWindows)==true AND $(BuildNative)==true">
     <Content Include="../../$(Configuration)/libminiprotoc.dll" CopyToOutputDirectory="Always" />
     <Content Include="../../$(Configuration)/libminiprotoc.pdb" CopyToOutputDirectory="Always" />
-    <Content Include="../../$(Configuration)/*.lib" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,7 +30,7 @@
     <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
   </PropertyGroup>
 
-  <ItemGroup Condition="$(IsWindows)==true">
+  <ItemGroup Condition="$(IsWindows)==true AND $(BuildNative)==true">
     <ProjectReference Include="..\libprotoc-export\libprotoc-export.vcxproj" />
   </ItemGroup>
 

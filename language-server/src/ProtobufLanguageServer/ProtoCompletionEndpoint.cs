@@ -62,12 +62,7 @@ namespace ProtobufLanguageServer
                 TaskCreationOptions.None,
                 _threadManager.ForegroundScheduler);
 
-            var syntaxTree = await Task.Factory.StartNew(
-                async () => await document.GetSyntaxTreeAsync(),
-                CancellationToken.None,
-                TaskCreationOptions.None,
-                _threadManager.BackgroundScheduler);
-
+            var syntaxTree = await document.GetSyntaxTreeAsync();
             // TODO: Do something useful with this syntax tree.
 
             // Provide your completions here
