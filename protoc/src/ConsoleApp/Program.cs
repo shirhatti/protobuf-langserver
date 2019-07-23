@@ -55,7 +55,6 @@ namespace ConsoleApp
                     };
 
                     info.ResolvePath(location.PathList);
-                    info.ResolveContent(lines);
 
                     if (info.Type == "label")
                     {
@@ -63,6 +62,9 @@ namespace ConsoleApp
                         info.EndLine = info.StartLine;
                         info.EndCol = lines[info.StartLine].ToString().Length - 1;
                     }
+
+                    info.ResolveContent(lines);
+
 
                     infoList.Add(info);
                 }

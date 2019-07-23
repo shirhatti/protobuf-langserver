@@ -64,12 +64,16 @@ namespace Protogen
             var resolvedMessageDescriptor = FileDescriptorProto.Descriptor;
             var resolvedTypeName = "";
 
-            foreach (var path in pathList)
+            for (var i = 0; i < pathList.Count; i ++)
             {
+                var path = pathList[i];
+
                 Links += $" => {path}";
 
-                if (path == 0)
+                if (i % 2 == 1)
                 {
+                    // Skip index
+                    // Format of pathList is {type, index, type, index, type, index, ...} for resolving types, we don't need the index 
                     continue;
                 }
 
