@@ -97,6 +97,12 @@
         },
         {
           "include": "#meta.message-declaration.protobuf"
+        },
+        {
+          "include": "#extend_block"
+        },
+        {
+          "include": "#map_field"
         }
       ]
     },
@@ -208,6 +214,30 @@
             }
           },
           "name": "meta.individual-rpc-call.protobuf"
+        },
+        {
+          "match": "\\b(rpc)\\s+([A-Za-z0-9_]+)\\s+\\(([A-Za-z0-9_.]+)\\)\\s*(returns)\\s*\\((stream)\\s([A-Za-z0-9_.]+)\\)\\s*;",
+          "captures": {
+            "1": {
+              "name": "keyword.other.rpc-definition.protobuf"
+            },
+            "2": {
+              "name": "entity.name.function.service-rpc.protobuf"
+            },
+            "3": {
+              "name": "variable.parameter.request-type.protobuf"
+            },
+            "4": {
+              "name": "keyword.operator.returns.protobuf"
+            },
+            "5": {
+              "name": "keyword.operator.stream.protobuf"
+            },
+            "6": {
+              "name": "variable.parameter.response-type.protobuf"
+            }
+          },
+          "name": "meta.individual-rpc-stream-call.protobuf"
         },
         {
           "meta.method-mofification.protobuf": {
@@ -328,7 +358,7 @@
       "name": "comment.line.double-slash.protobuf"
     },
     "extend_block": {
-      "begin": "\\b(extend)\\s+([A-Za-z0-9_]+)\\s*\\{",
+      "begin": "\\b(extend)\\s+([A-Za-z0-9_.]+)\\s*\\{",
       "end": "}",
       "captures": {
         "1": {
@@ -417,6 +447,26 @@
         }
       }
     },
+    "map_field": {
+      "match": "(map)<([A-Za-z0-9]+),\\s+([A-Za-z0-9]+)>\\s+(\\S+)\\s*=\\s*(\\d+)",
+      "captures": {
+        "1": {
+          "name": "storage.type.built-in.protobuf"
+        },
+        "2": {
+          "name": "storage.type.built-in.protobuf"
+        },
+        "3": {
+          "name": "storage.type.built-in.protobuf"
+        },
+        "4": {
+          "name": "variable.other.primitive-field.protobuf"
+        },
+        "5": {
+          "name": "constant.numeric.field-tag.protobuf"
+        }
+      }
+    },
     "rpc_primitive_attribute": {
       "match": "(option)\\s+\\(?([A-Za-z0-9_.]+)\\)?\\.([A-Za-z0-9.]+)\\s*=\\s*(true|false|\\d+|([A-Z_]+))\\b",
       "beginCaptures": {
@@ -477,7 +527,7 @@
       "contentName": "string.quoted.double.protobuf"
     },
     "user_defined_message_field": {
-      "match": "(required|optional|repeated)?\\s+?([A-Za-z._]*)\\s+(\\S+)\\s*=\\s*(\\d+)",
+      "match": "(required|optional|repeated)?\\s+?([A-Za-z0-9_.]+)\\s+(\\w+)\\s*=\\s*(\\d+)",
       "captures": {
         "1": {
           "name": "keyword.control.occurrences.protobuf"
