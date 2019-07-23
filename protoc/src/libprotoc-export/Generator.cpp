@@ -137,7 +137,7 @@ class SingleFileErrorCollector
   bool had_errors_;
 };
 
-bool generate(void* file, int64 fileSize, void* fileDescriptor)
+bool generate(void* file, int64 fileSize, void* fileDescriptor, int64& fileDescriptorSize)
 {
 	const std::string& filename = "greet.proto";
 	std::unique_ptr<DescriptorPool> descriptor_pool;
@@ -147,8 +147,12 @@ bool generate(void* file, int64 fileSize, void* fileDescriptor)
 	io::Tokenizer tokenizer(input.get(), &file_error_collector);
 
 	Parser parser;
-	FileDescriptorProto* output = new(fileDescriptor) FileDescriptorProto();
-	return parser.Parse(&tokenizer, output);
+	FileDescriptorProto* output = new FileDescriptorProto();
+	bool parseResult = parser.Parse(&tokenizer, output);
+	fileDescriptorSize = output->ByteSizeLong();
+	output->SerializeToArray(fileDescriptor, fileDescriptorSize);
+	delete(output);
+	return parseResult;
 
 	//std::unique_ptr<DiskSourceTree> disk_source_tree;
 	//std::unique_ptr<ErrorPrinter> error_collector;
@@ -181,7 +185,6 @@ bool generate(void* file, int64 fileSize, void* fileDescriptor)
 	
 	// TODO: initialize descriptor pool
 
-	return true;
 
 	//return false;
 	//NoopErrorCollector noop_error_collector();

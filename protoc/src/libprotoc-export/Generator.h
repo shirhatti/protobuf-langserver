@@ -8,4 +8,4 @@
 
 #include <google/protobuf/stubs/port.h>
 
-extern "C" GENERATOR_API bool generate(void*, google::protobuf::int64, void*);
+extern "C" GENERATOR_API bool generate(void*, google::protobuf::int64, void*, google::protobuf::int64&);
