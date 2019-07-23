@@ -14,7 +14,7 @@ namespace Protogen
         public Node GetChildNodeAt(int line, int col)
         {
             return Children
-                .SingleOrDefault(n => n.Info.StartLine <= line && line <= n.Info.EndLine && n.Info.StartCol <= col && col <= n.Info.EndCol)
+                .SingleOrDefault((n => (n.Info.StartLine < line || (n.Info.StartLine == line && n.Info.StartCol <= col)) && ( line < n.Info.EndLine || (line == n.Info.EndLine && col <= n.Info.EndCol))))
                 ?.GetChildNodeAt(line, col)
                 ?? this;
         }
