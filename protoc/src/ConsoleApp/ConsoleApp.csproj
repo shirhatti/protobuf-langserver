@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\libprotoc-export\libprotoc-export.vcxproj" />
     <ProjectReference Include="..\protoc-gen-cs\protoc-gen-cs.csproj" />
   </ItemGroup>
 

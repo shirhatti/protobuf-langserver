@@ -83,7 +83,7 @@ namespace ProtobufLanguageServer
             };
             var completionList = new CompletionList(item1, item2);
             
-            return Task.FromResult(completionList);
+            return completionList;
         }
 
         public Task<CompletionItem> Handle(CompletionItem request, CancellationToken cancellationToken)

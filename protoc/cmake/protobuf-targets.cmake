@@ -45,21 +45,21 @@ unset(_expectedTargets)
 add_library(protobuf::libprotobuf-lite STATIC IMPORTED)
 
 set_target_properties(protobuf::libprotobuf-lite PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "C:/gh/protobuf-langserver/protoc/protobuf/src"
+  INTERFACE_INCLUDE_DIRECTORIES "protobuf/src"
 )
 
 # Create imported target protobuf::libprotobuf
 add_library(protobuf::libprotobuf STATIC IMPORTED)
 
 set_target_properties(protobuf::libprotobuf PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "C:/gh/protobuf-langserver/protoc/protobuf/src"
+  INTERFACE_INCLUDE_DIRECTORIES "protobuf/src"
 )
 
 # Create imported target protobuf::libprotoc
 add_library(protobuf::libprotoc STATIC IMPORTED)
 
 set_target_properties(protobuf::libprotoc PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "C:/gh/protobuf-langserver/protoc/protobuf/src"
+  INTERFACE_INCLUDE_DIRECTORIES "protobuf/src"
   INTERFACE_LINK_LIBRARIES "protobuf::libprotobuf"
 )
 
@@ -70,108 +70,108 @@ add_executable(protobuf::protoc IMPORTED)
 set_property(TARGET protobuf::libprotobuf-lite APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(protobuf::libprotobuf-lite PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX;RC"
-  IMPORTED_LOCATION_DEBUG "C:/gh/protobuf-langserver/protoc/Debug/libprotobuf-lited.lib"
+  IMPORTED_LOCATION_DEBUG "Debug/libprotobuf-lited.lib"
   )
 
 # Import target "protobuf::libprotobuf" for configuration "Debug"
 set_property(TARGET protobuf::libprotobuf APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(protobuf::libprotobuf PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX;RC"
-  IMPORTED_LOCATION_DEBUG "C:/gh/protobuf-langserver/protoc/Debug/libprotobufd.lib"
+  IMPORTED_LOCATION_DEBUG "Debug/libprotobufd.lib"
   )
 
 # Import target "protobuf::libprotoc" for configuration "Debug"
 set_property(TARGET protobuf::libprotoc APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(protobuf::libprotoc PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX;RC"
-  IMPORTED_LOCATION_DEBUG "C:/gh/protobuf-langserver/protoc/Debug/libprotocd.lib"
+  IMPORTED_LOCATION_DEBUG "Debug/libprotocd.lib"
   )
 
 # Import target "protobuf::protoc" for configuration "Debug"
 set_property(TARGET protobuf::protoc APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(protobuf::protoc PROPERTIES
-  IMPORTED_LOCATION_DEBUG "C:/gh/protobuf-langserver/protoc/Debug/protoc.exe"
+  IMPORTED_LOCATION_DEBUG "Debug/protoc.exe"
   )
 
 # Import target "protobuf::libprotobuf-lite" for configuration "Release"
 set_property(TARGET protobuf::libprotobuf-lite APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(protobuf::libprotobuf-lite PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX;RC"
-  IMPORTED_LOCATION_RELEASE "C:/gh/protobuf-langserver/protoc/Release/libprotobuf-lite.lib"
+  IMPORTED_LOCATION_RELEASE "Release/libprotobuf-lite.lib"
   )
 
 # Import target "protobuf::libprotobuf" for configuration "Release"
 set_property(TARGET protobuf::libprotobuf APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(protobuf::libprotobuf PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX;RC"
-  IMPORTED_LOCATION_RELEASE "C:/gh/protobuf-langserver/protoc/Release/libprotobuf.lib"
+  IMPORTED_LOCATION_RELEASE "Release/libprotobuf.lib"
   )
 
 # Import target "protobuf::libprotoc" for configuration "Release"
 set_property(TARGET protobuf::libprotoc APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(protobuf::libprotoc PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX;RC"
-  IMPORTED_LOCATION_RELEASE "C:/gh/protobuf-langserver/protoc/Release/libprotoc.lib"
+  IMPORTED_LOCATION_RELEASE "Release/libprotoc.lib"
   )
 
 # Import target "protobuf::protoc" for configuration "Release"
 set_property(TARGET protobuf::protoc APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(protobuf::protoc PROPERTIES
-  IMPORTED_LOCATION_RELEASE "C:/gh/protobuf-langserver/protoc/Release/protoc.exe"
+  IMPORTED_LOCATION_RELEASE "Release/protoc.exe"
   )
 
 # Import target "protobuf::libprotobuf-lite" for configuration "MinSizeRel"
 set_property(TARGET protobuf::libprotobuf-lite APPEND PROPERTY IMPORTED_CONFIGURATIONS MINSIZEREL)
 set_target_properties(protobuf::libprotobuf-lite PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_MINSIZEREL "CXX;RC"
-  IMPORTED_LOCATION_MINSIZEREL "C:/gh/protobuf-langserver/protoc/MinSizeRel/libprotobuf-lite.lib"
+  IMPORTED_LOCATION_MINSIZEREL "MinSizeRel/libprotobuf-lite.lib"
   )
 
 # Import target "protobuf::libprotobuf" for configuration "MinSizeRel"
 set_property(TARGET protobuf::libprotobuf APPEND PROPERTY IMPORTED_CONFIGURATIONS MINSIZEREL)
 set_target_properties(protobuf::libprotobuf PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_MINSIZEREL "CXX;RC"
-  IMPORTED_LOCATION_MINSIZEREL "C:/gh/protobuf-langserver/protoc/MinSizeRel/libprotobuf.lib"
+  IMPORTED_LOCATION_MINSIZEREL "MinSizeRel/libprotobuf.lib"
   )
 
 # Import target "protobuf::libprotoc" for configuration "MinSizeRel"
 set_property(TARGET protobuf::libprotoc APPEND PROPERTY IMPORTED_CONFIGURATIONS MINSIZEREL)
 set_target_properties(protobuf::libprotoc PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_MINSIZEREL "CXX;RC"
-  IMPORTED_LOCATION_MINSIZEREL "C:/gh/protobuf-langserver/protoc/MinSizeRel/libprotoc.lib"
+  IMPORTED_LOCATION_MINSIZEREL "MinSizeRel/libprotoc.lib"
   )
 
 # Import target "protobuf::protoc" for configuration "MinSizeRel"
 set_property(TARGET protobuf::protoc APPEND PROPERTY IMPORTED_CONFIGURATIONS MINSIZEREL)
 set_target_properties(protobuf::protoc PROPERTIES
-  IMPORTED_LOCATION_MINSIZEREL "C:/gh/protobuf-langserver/protoc/MinSizeRel/protoc.exe"
+  IMPORTED_LOCATION_MINSIZEREL "MinSizeRel/protoc.exe"
   )
 
 # Import target "protobuf::libprotobuf-lite" for configuration "RelWithDebInfo"
 set_property(TARGET protobuf::libprotobuf-lite APPEND PROPERTY IMPORTED_CONFIGURATIONS RELWITHDEBINFO)
 set_target_properties(protobuf::libprotobuf-lite PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_RELWITHDEBINFO "CXX;RC"
-  IMPORTED_LOCATION_RELWITHDEBINFO "C:/gh/protobuf-langserver/protoc/RelWithDebInfo/libprotobuf-lite.lib"
+  IMPORTED_LOCATION_RELWITHDEBINFO "RelWithDebInfo/libprotobuf-lite.lib"
   )
 
 # Import target "protobuf::libprotobuf" for configuration "RelWithDebInfo"
 set_property(TARGET protobuf::libprotobuf APPEND PROPERTY IMPORTED_CONFIGURATIONS RELWITHDEBINFO)
 set_target_properties(protobuf::libprotobuf PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_RELWITHDEBINFO "CXX;RC"
-  IMPORTED_LOCATION_RELWITHDEBINFO "C:/gh/protobuf-langserver/protoc/RelWithDebInfo/libprotobuf.lib"
+  IMPORTED_LOCATION_RELWITHDEBINFO "RelWithDebInfo/libprotobuf.lib"
   )
 
 # Import target "protobuf::libprotoc" for configuration "RelWithDebInfo"
 set_property(TARGET protobuf::libprotoc APPEND PROPERTY IMPORTED_CONFIGURATIONS RELWITHDEBINFO)
 set_target_properties(protobuf::libprotoc PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_RELWITHDEBINFO "CXX;RC"
-  IMPORTED_LOCATION_RELWITHDEBINFO "C:/gh/protobuf-langserver/protoc/RelWithDebInfo/libprotoc.lib"
+  IMPORTED_LOCATION_RELWITHDEBINFO "RelWithDebInfo/libprotoc.lib"
   )
 
 # Import target "protobuf::protoc" for configuration "RelWithDebInfo"
 set_property(TARGET protobuf::protoc APPEND PROPERTY IMPORTED_CONFIGURATIONS RELWITHDEBINFO)
 set_target_properties(protobuf::protoc PROPERTIES
-  IMPORTED_LOCATION_RELWITHDEBINFO "C:/gh/protobuf-langserver/protoc/RelWithDebInfo/protoc.exe"
+  IMPORTED_LOCATION_RELWITHDEBINFO "RelWithDebInfo/protoc.exe"
   )
 
 # This file does not depend on other imported targets which have

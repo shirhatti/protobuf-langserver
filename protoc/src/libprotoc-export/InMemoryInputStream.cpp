@@ -14,17 +14,28 @@ InMemoryInputStream::InMemoryInputStream(void* data, int64 size)
 InMemoryInputStream::~InMemoryInputStream() {};
 
 bool InMemoryInputStream::Next(const void** data, int* size) {
-	*data = currentPosition;
+	// Handle seeking. This only works for first read
+	if (this->currentPosition == 0)
+	{
+		*data = this->data;
+		*size = this->size;
+		this->currentPosition = this->size;
+		return true;
+	}
 	return false;
 }
 
 void InMemoryInputStream::BackUp(int count) {
-	currentPosition = (void*)((char*)currentPosition - count);
+	currentPosition -= count;
 }
 
 bool InMemoryInputStream::Skip(int count) {
-	currentPosition = (void*)((char*)currentPosition + count);
-	return false;
+	if (currentPosition + count > size)
+	{
+		return false;
+	}
+	currentPosition += count;
+	return true;
 }
 
 int64 InMemoryInputStream::ByteCount() const {
