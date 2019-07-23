@@ -16,8 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.8.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\libprotoc-export\libprotoc-export.vcxproj" />
-    <ProjectReference Include="..\protoc-gen-cs\protoc-gen-cs.csproj" />
   </ItemGroup>
 
   <ItemGroup>

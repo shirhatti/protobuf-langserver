@@ -1,68 +1,91 @@
 ﻿using Google.ProtocolBuffers.DescriptorProtos;
+using Microsoft.CodeAnalysis.Text;
+using Protogen;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
-    class Info
-    {
-        public int StartLine { get; set; }
-        public int StartCol { get; set; }
-        public int EndLine { get; set; }
-        public int EndCol { get; set; }
-        public string Type { get; set; }
-        public string Name { get; set; }
-        public string File { get; set; }
-    }
-    class Program
+    public class Program
     {
         [DllImport("libminiprotoc.dll")]
         public static extern bool generate(IntPtr file, Int64 fileSize, IntPtr descriptorProtoPtr, out Int64 descriptorSize);
-        static void Main(string[] args)
+        
+        public static async Task Main()
         {
-            var inputFile = File.ReadAllBytes("greet.proto");
+            var stringInput = await File.ReadAllTextAsync("greet.proto");
+            var text = SourceText.From(stringInput);
+            var ast = GetSyntaxTree("greet.proto", text);
+        }
+
+        public static Node GetSyntaxTree(string path, SourceText text)
+        {
+            var chars = new char[text.Length];
+            text.CopyTo(0, chars, 0, text.Length);
+            var resolvedEncoding = text.Encoding ?? Encoding.UTF8;
+            var inputFile = resolvedEncoding.GetBytes(chars);
+            var infoList = new List<NodeInfo>();
+            var lines = text.Lines;
+            Node ast = null;
             using (var inputSlab = new MemoryPoolSlab(inputFile))
             using (var outputSlab = new MemoryPoolSlab(new byte[1000000]))
             {
-                generate(inputSlab.NativePointer, inputFile.Length, outputSlab.NativePointer, out var descriptorSize);
-                var infoList = new List<Info>();
+
+                var parseStatus = generate(inputSlab.NativePointer, inputFile.Length, outputSlab.NativePointer, out var descriptorSize);
                 var byteArray = new byte[descriptorSize];
                 Marshal.Copy(outputSlab.NativePointer, byteArray, 0, (int)descriptorSize);
                 var file = FileDescriptorProto.ParseFrom(byteArray);
-                //FileDescriptorProto file = null;
-                //for (int j=50; j<=descriptorSize; j++)
-                //{
-                //    try
-                //    {
-                //        var byteArray = new byte[j];
-                //        Marshal.Copy(outputSlab.NativePointer, byteArray, 0, j);
-                //        file = FileDescriptorProto.ParseFrom(byteArray);
-                //        break;
-                //    }
-                //    catch (Exception)
-                //    { }
-
-                //}
 
                 foreach (var location in file.SourceCodeInfo.LocationList)
                 {
-                    infoList.Add(new Info
+                    var info = new NodeInfo
                     {
                         StartLine = location.SpanList[0],
                         StartCol = location.SpanList[1],
                         EndLine = location.SpanCount == 3 ? location.SpanList[0] : location.SpanList[2],
                         EndCol = location.SpanCount == 3 ? location.SpanList[2] : location.SpanList[3],
-                        File = file.Name,
-                        //Type = location.DescriptorForType.,
-                        Name = file.Name,
-                    });
+                        File = file.Name
+                    };
+
+                    info.ResolvePath(location.PathList);
+                    info.ResolveContent(lines);
+
+                    if (info.Type == "label")
+                    {
+                        // There's a bug in protobuf where labels in version 3 isn't parsed correctly
+                        info.EndLine = info.StartLine;
+                        info.EndCol = lines[info.StartLine].ToString().Length - 1;
+                    }
+
+                    infoList.Add(info);
+                }
+
+                foreach (var info in infoList.OrderByDescending(i => i.Content.Length))
+                {
+
+                    if (ast == null)
+                    {
+                        ast = new Node { Info = info };
+                    }
+                    else
+                    {
+                        var node = ast.GetChildNodeAt(info.StartLine, info.StartCol);
+                        node.Children.Add(new Node
+                        {
+                            Info = info,
+                            Parent = node
+                        });
+                    }
                 }
             }
-            Console.WriteLine("Hello World!");
+            return ast;
         }
     }
 }
