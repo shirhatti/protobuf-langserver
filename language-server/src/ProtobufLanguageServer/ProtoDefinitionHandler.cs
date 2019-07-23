@@ -73,7 +73,7 @@ namespace ProtobufLanguageServer
 
             var locations = new LocationOrLocationLinks(location1, location2);
 
-            return Task.FromResult(locations);
+            return locations;
         }
 
         public void SetCapability(DefinitionCapability capability)
