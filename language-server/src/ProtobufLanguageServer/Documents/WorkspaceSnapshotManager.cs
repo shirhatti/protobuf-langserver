@@ -26,7 +26,8 @@ namespace ProtobufLanguageServer.Documents
         }
 
         public WorkspaceSnapshot WorkspaceSnapshot {
-            get {
+            get
+            {
                 _threadManager.AssertForegroundThread();
                 if(_workspaceSnapshot == null)
                 {
@@ -34,7 +35,8 @@ namespace ProtobufLanguageServer.Documents
                 }
                 return _workspaceSnapshot;
             }
-            set{
+            set
+            {
                 _threadManager.AssertForegroundThread();
                 _workspaceSnapshot = value;
             }

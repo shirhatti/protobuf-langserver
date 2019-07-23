@@ -9,5 +9,10 @@
   <ItemGroup>
     <PackageReference Include="OmniSharp.Extensions.LanguageServer" Version="0.12.1" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.1.0" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\protoc\src\ConsoleApp\ConsoleApp.csproj" />
   </ItemGroup>
 </Project>
