@@ -21,16 +21,33 @@ namespace ConsoleApp
     class Program
     {
         [DllImport("libminiprotoc.dll")]
-        public static extern bool generate(IntPtr file, Int64 fileSize, IntPtr descriptorProtoPtr);
+        public static extern bool generate(IntPtr file, Int64 fileSize, IntPtr descriptorProtoPtr, out Int64 descriptorSize);
         static void Main(string[] args)
         {
             var inputFile = File.ReadAllBytes("greet.proto");
             using (var inputSlab = new MemoryPoolSlab(inputFile))
             using (var outputSlab = new MemoryPoolSlab(new byte[1000000]))
             {
-                generate(inputSlab.NativePointer, inputFile.Length, outputSlab.NativePointer);
+                generate(inputSlab.NativePointer, inputFile.Length, outputSlab.NativePointer, out var descriptorSize);
                 var infoList = new List<Info>();
-                var file = FileDescriptorProto.ParseFrom(outputSlab.Array);
+                var byteArray = new byte[descriptorSize];
+                Marshal.Copy(outputSlab.NativePointer, byteArray, 0, (int)descriptorSize);
+                var file = FileDescriptorProto.ParseFrom(byteArray);
+                //FileDescriptorProto file = null;
+                //for (int j=50; j<=descriptorSize; j++)
+                //{
+                //    try
+                //    {
+                //        var byteArray = new byte[j];
+                //        Marshal.Copy(outputSlab.NativePointer, byteArray, 0, j);
+                //        file = FileDescriptorProto.ParseFrom(byteArray);
+                //        break;
+                //    }
+                //    catch (Exception)
+                //    { }
+
+                //}
+
                 foreach (var location in file.SourceCodeInfo.LocationList)
                 {
                     infoList.Add(new Info
