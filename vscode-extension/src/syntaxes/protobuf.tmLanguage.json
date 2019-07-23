@@ -91,6 +91,12 @@
         },
         {
           "include": "#multiline_comments"
+        },
+        {
+          "include": "#meta.enum-declaration.protobuf"
+        },
+        {
+          "include": "#meta.message-declaration.protobuf"
         }
       ]
     },
