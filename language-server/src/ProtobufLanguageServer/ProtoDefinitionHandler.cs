@@ -1,11 +1,11 @@
 
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
+using ProtobufLanguageServer.Documents;
 
 namespace ProtobufLanguageServer
 {
@@ -13,11 +13,13 @@ namespace ProtobufLanguageServer
     {
         private readonly ILanguageServer _router;
         private readonly ForegroundThreadManager _threadManager;
+        private readonly WorkspaceSnapshotManager _snapshotManager;
 
         private DefinitionCapability _capability;
 
-        public ProtoDefinitionEndpoint(ForegroundThreadManager threadManager, ILanguageServer router)
+        public ProtoDefinitionEndpoint(ForegroundThreadManager threadManager, ILanguageServer router, WorkspaceSnapshotManager snapshotManager)
         {
+            _snapshotManager = snapshotManager;
             _threadManager = threadManager;
             _router = router ?? throw new ArgumentNullException(nameof(router));
         }
@@ -30,13 +32,32 @@ namespace ProtobufLanguageServer
             };
         }
 
-        public Task<LocationOrLocationLinks> Handle(DefinitionParams request, CancellationToken cancellationToken)
+        public async Task<LocationOrLocationLinks> Handle(DefinitionParams request, CancellationToken cancellationToken)
         {
             _router.Window.LogMessage(new LogMessageParams()
             {
                 Type = MessageType.Log,
                 Message = "Go to definition request at line: " + (request.Position.Line + 1),
             });
+
+            _threadManager.AssertBackgroundThread();
+
+            var document = await Task.Factory.StartNew(
+                () => {
+                    _snapshotManager.TryResolveDocument(request.TextDocument.Uri.AbsolutePath, out var doc);
+                    return doc;
+                },
+                CancellationToken.None,
+                TaskCreationOptions.None,
+                _threadManager.ForegroundScheduler);
+
+            var syntaxTree = await Task.Factory.StartNew(
+                async () => await document.GetSyntaxTreeAsync(),
+                CancellationToken.None,
+                TaskCreationOptions.None,
+                _threadManager.BackgroundScheduler);
+
+            // TODO: Do something useful with this syntax tree.
 
             var location1 = new LocationOrLocationLink(new Location()
             {

@@ -1,0 +1,491 @@
+{
+  "name": "Protobuf",
+  "scopeName": "text.protobuf",
+  "patterns": [
+    {
+      "include": "#anywhere_option"
+    },
+    {
+      "include": "#bracketed_option"
+    },
+    {
+      "include": "#extend_block"
+    },
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#multiline_comments"
+    },
+    {
+      "include": "#meta.import.declaration.protobuf"
+    },
+    {
+      "include": "#meta.syntax.declaration.protobuf"
+    },
+    {
+      "include": "#meta.message-declaration.protobuf"
+    },
+    {
+      "include": "#meta.enum-declaration.protobuf"
+    },
+    {
+      "include": "#meta.oneof-declaration.protobuf"
+    },
+    {
+      "include": "#meta.service-declaration.protobuf"
+    },
+    {
+      "include": "#meta.package.protobuf"
+    },
+    {
+      "include": "#meta.extension-specification.protobuf"
+    }
+  ],
+  "repository": {
+    "meta.import.declaration.protobuf": {
+      "match": "(import) (.*);",
+      "captures": {
+        "1": {
+          "name": "keyword.other.import.protobuf"
+        },
+        "2": {
+          "name": "string.quoted.double.import.protobuf"
+        }
+      }
+    },
+    "meta.syntax.declaration.protobuf": {
+      "match": "(syntax)\\s*=\\s*(.*);",
+      "captures": {
+        "1": {
+          "name": "keyword.other.syntax.protobuf"
+        },
+        "2": {
+          "name": "string.quoted.double.syntax.protobuf"
+        }
+      }
+    },
+    "meta.message-declaration.protobuf": {
+      "begin": "\\b(message)\\s+([A-Za-z0-9_]+)\\s*\\{",
+      "end": "}",
+      "captures": {
+        "1": {
+          "name": "storage.type.message.protobuf"
+        },
+        "2": {
+          "name": "entity.name.type.message.protobuf"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#meta.oneof-declaration.protobuf"
+        },
+        {
+          "include": "#meta.extension-specification.protobuf"
+        },
+        {
+          "include": "#any_field"
+        },
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#multiline_comments"
+        }
+      ]
+    },
+    "meta.enum-declaration.protobuf": {
+      "begin": "\\b(enum)\\s+([A-Za-z0-9_]+)\\s*\\{",
+      "end": "}",
+      "beginCaptures": {
+        "1": {
+          "name": "storage.type.enum.protobuf"
+        },
+        "2": {
+          "name": "entity.name.type.enum.protobuf"
+        }
+      },
+      "patterns": [
+        {
+          "match": "\\b([A-Za-z0-9_]+)\\s*=\\s*(\\d+)\\b",
+          "captures": {
+            "1": {
+              "name": "constant.other.user-defined.protobuf"
+            },
+            "2": {
+              "name": "constant.numeric.protobuf"
+            }
+          },
+          "name": "meta.individual-enum-definition.protobuf"
+        },
+        {
+          "include": "#anywhere_option"
+        },
+        {
+          "include": "#bracketed_option"
+        },
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#multiline_comments"
+        }
+      ]
+    },
+    "meta.oneof-declaration.protobuf": {
+      "begin": "\\b(oneof)\\s+([A-Za-z0-9_]+)\\s*\\{",
+      "end": "}",
+      "beginCaptures": {
+        "1": {
+          "name": "storage.type.oneof.protobuf"
+        },
+        "2": {
+          "name": "entity.name.type.oneof.protobuf"
+        }
+      },
+      "patterns": [
+        {
+          "match": "\\b([A-Za-z0-9_]+)\\s*=\\s*(\\d+)\\b",
+          "captures": {
+            "1": {
+              "name": "constant.other.user-defined.protobuf"
+            },
+            "2": {
+              "name": "constant.numeric.protobuf"
+            }
+          },
+          "name": "meta.individual-oneof-definition.protobuf"
+        },
+        {
+          "include": "#meta.oneof-declaration.protobuf"
+        },
+        {
+          "include": "#any_field"
+        },
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#multiline_comments"
+        }
+      ]
+    },
+    "meta.service-declaration.protobuf": {
+      "begin": "\\b(service)\\s+([A-Za-z0-9_]+)\\s*\\{",
+      "end": "}",
+      "beginCaptures": {
+        "1": {
+          "name": "storage.type.enum.protobuf"
+        },
+        "2": {
+          "name": "entity.name.type.enum.protobuf"
+        }
+      },
+      "patterns": [
+        {
+          "match": "\\b(rpc)\\s+([A-Za-z0-9_]+)\\s+\\(([A-Za-z0-9_.]+)\\)\\s*(returns)\\s*\\(([A-Za-z0-9_.]+)\\)\\s*;",
+          "captures": {
+            "1": {
+              "name": "keyword.other.rpc-definition.protobuf"
+            },
+            "2": {
+              "name": "entity.name.function.service-rpc.protobuf"
+            },
+            "3": {
+              "name": "variable.parameter.request-type.protobuf"
+            },
+            "4": {
+              "name": "keyword.operator.returns.protobuf"
+            },
+            "5": {
+              "name": "variable.parameter.response-type.protobuf"
+            }
+          },
+          "name": "meta.individual-rpc-call.protobuf"
+        },
+        {
+          "meta.method-mofification.protobuf": {
+            "begin": "\\b(method)\\s+([A-Za-z0-9_]+)\\s*\\(\\s*\\)\\s*{",
+            "end": "}",
+            "captures": {
+              "1": {
+                "name": "keyword.other.method-modification.protobuf"
+              },
+              "2": {
+                "name": "entity.name.function.protobuf"
+              }
+            },
+            "patterns": [
+              {
+                "include": "#comments"
+              },
+              {
+                "include": "#rpc_string_attribute"
+              },
+              {
+                "include": "#rpc_primitive_attribute"
+              }
+            ]
+          }
+        },
+        {
+          "include": "#anwhere_option"
+        },
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#multiline_comments"
+        }
+      ]
+    },
+    "meta.package.protobuf": {
+      "match": "\\b(package)\\s+([A-Za-z0-9._]+)\\s*;",
+      "captures": {
+        "1": {
+          "name": "keyword.other.package-definition.protobuf"
+        },
+        "2": {
+          "name": "entity.name.section.protobuf"
+        }
+      }
+    },
+    "meta.extension-specification.protobuf": {
+      "match": "(extensions)\\s+(\\d+)\\s+(to)\\s+(max|\\d+);",
+      "captures": {
+        "1": {
+          "name": "storage.modifier.extensions.protobuf"
+        },
+        "2": {
+          "name": "constant.numeric.protobufs"
+        },
+        "3": {
+          "name": "keyword.operator.to.protobufs"
+        },
+        "4": {
+          "name": "constant.numeric.protobufs"
+        }
+      }
+    },
+    "any_field": {
+      "patterns": [
+        {
+          "include": "#primitive_field"
+        },
+        {
+          "include": "#group_field"
+        },
+        {
+          "include": "#user_defined_message_field"
+        },
+        {
+          "include": "#reserved_field"
+        }
+      ]
+    },
+    "anywhere_option": {
+      "begin": "(option)\\s+",
+      "end": ";",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.other.option.protobuf"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#attribute"
+        }
+      ]
+    },
+    "attribute": {
+      "patterns": [
+        {
+          "include": "#indiv_attribute"
+        },
+        {
+          "include": "#string_attribute"
+        }
+      ]
+    },
+    "bracketed_option": {
+      "begin": "\\[",
+      "end": ";",
+      "patterns": [
+        {
+          "include": "#attribute"
+        }
+      ]
+    },
+    "comments": {
+      "begin": "//",
+      "end": "\\n",
+      "name": "comment.line.double-slash.protobuf"
+    },
+    "extend_block": {
+      "begin": "\\b(extend)\\s+([A-Za-z0-9_]+)\\s*\\{",
+      "end": "}",
+      "captures": {
+        "1": {
+          "name": "storage.type.extend.protobuf"
+        },
+        "2": {
+          "name": "entity.name.type.message.protobuf"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#any_field"
+        },
+        {
+          "include": "#comments"
+        }
+      ]
+    },
+    "group_field": {
+      "begin": "(required|optional|repeated)?\\s+?(group)\\s+([A-Za-z0-9_]+)\\s*=\\s*(\\d+)\\s*{",
+      "end": "}",
+      "captures": {
+        "1": {
+          "name": "keyword.control.occurrences.protobuf"
+        },
+        "2": {
+          "name": "invalid.deprecated.groups.protobuf"
+        },
+        "3": {
+          "name": "variable.other.primitive-field.protobuf"
+        },
+        "4": {
+          "name": "constant.numeric.field-tag.protobuf"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#any_field"
+        },
+        {
+          "include": "#comments"
+        }
+      ]
+    },
+    "indiv_attribute": {
+      "match": "\\(?([A-Za-z0-9_.]+)\\)?\\s*=\\s*(true|false|\\d+|([A-Z_]+))\\b",
+      "captures": {
+        "1": {
+          "name": "entity.other.attribute-name.protobuf"
+        },
+        "2": {
+          "name": "constant.language.field-option-values.protobuf"
+        }
+      }
+    },
+    "multiline_comments": {
+      "begin": "/\\*",
+      "end": "\\*/",
+      "name": "comment.block.protobuf"
+    },
+    "primitive_field": {
+      "match": "(required|optional|repeated)?\\s+?(((s|u)?int|s?fixed)(32|64)|string|bytes|bool)\\s+(\\S+)\\s*=\\s*(\\d+)",
+      "captures": {
+        "1": {
+          "name": "keyword.control.occurrences.protobuf"
+        },
+        "2": {
+          "name": "storage.type.built-in.protobuf"
+        },
+        "6": {
+          "name": "variable.other.primitive-field.protobuf"
+        },
+        "7": {
+          "name": "constant.numeric.field-tag.protobuf"
+        }
+      }
+    },
+    "reserved_field": {
+      "match": "(reserved)\\s+(\\d+)",
+      "captures": {
+        "1": {
+          "name": "keyword.control.occurrences.protobuf"
+        },
+        "2": {
+          "name": "constant.numeric.field-tag.protobuf"
+        }
+      }
+    },
+    "rpc_primitive_attribute": {
+      "match": "(option)\\s+\\(?([A-Za-z0-9_.]+)\\)?\\.([A-Za-z0-9.]+)\\s*=\\s*(true|false|\\d+|([A-Z_]+))\\b",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.other.option.protobuf"
+        },
+        "2": {
+          "name": "entity.other.attribute-name.protobuf"
+        },
+        "3": {
+          "name": "entity.other.attribute-name.protobuf"
+        },
+        "4": {
+          "name": "constant.numeric.protobuf"
+        }
+      }
+    },
+    "rpc_string_attribute": {
+      "begin": "(option)\\s+\\(?([A-Za-z0-9_.]+)\\)?\\.([A-Za-z0-9.]+)\\s*=\\s*(\")",
+      "end": "(\")",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.other.option.protobuf"
+        },
+        "2": {
+          "name": "entity.other.attribute-name.protobuf"
+        },
+        "3": {
+          "name": "entity.other.attribute-name.protobuf"
+        },
+        "4": {
+          "name": "string.quoted.double.protobuf"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "string.quoted.double.protobuf"
+        }
+      },
+      "contentName": "string.quoted.double.protobuf"
+    },
+    "string_attribute": {
+      "begin": "\\(?([A-Za-z0-9_.]+)\\)?\\s*=\\s*(\")",
+      "end": "(\")",
+      "beginCaptures": {
+        "1": {
+          "name": "entity.other.attribute-name.protobuf"
+        },
+        "2": {
+          "name": "string.quoted.double.protobuf"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "string.quoted.double.protobuf"
+        }
+      },
+      "contentName": "string.quoted.double.protobuf"
+    },
+    "user_defined_message_field": {
+      "match": "(required|optional|repeated)?\\s+?([A-Za-z._]*)\\s+(\\S+)\\s*=\\s*(\\d+)",
+      "captures": {
+        "1": {
+          "name": "keyword.control.occurrences.protobuf"
+        },
+        "2": {
+          "name": "support.class.user-defined-type.protobuf"
+        },
+        "3": {
+          "name": "variable.other.primitive-field.protobuf"
+        },
+        "4": {
+          "name": "constant.numeric.field-tag.protobuf"
+        }
+      }
+    }
+  }
+}
