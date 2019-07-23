@@ -74,10 +74,12 @@ namespace ProtobufLanguageServer
             var item1 = new CompletionItem()
             {
                 Label = "Sample completion item 1",
+                InsertText = "SampleInsertText1"
             };
             var item2 = new CompletionItem()
             {
                 Label = "Sample completion item 2",
+                InsertText = "SampleInsertText2"
             };
             var completionList = new CompletionList(item1, item2);
             
