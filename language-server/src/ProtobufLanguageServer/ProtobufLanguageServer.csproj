@@ -6,25 +6,30 @@
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition="'$(MSBuildRuntimeType)' == 'Core'">
+    <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
+    <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <IsWindows Condition="'$(OS)' == 'Windows_NT'">true</IsWindows>
-  </PropertyGroup>
+  <ItemGroup Condition="$(IsWindows)==true AND $(BuildNative)==true">
+    <Content Include="../../../libminiprotoc/out/build/$(Platform)-$(Configuration)/libminiprotoc/libminiprotoc.dll" CopyToOutputDirectory="Always" />
+    <Content Include="../../../libminiprotoc/out/build/$(Platform)-$(Configuration)/libminiprotoc/libprotobufd.dll" CopyToOutputDirectory="Always" />
+  </ItemGroup>
 
-  <ItemGroup Condition="$(IsWindows)==true">
-    <Content Include="libminiprotoc.dll" CopyToOutputDirectory="Always" />
+  <ItemGroup Condition="$(IsWindows)==true AND $(BuildNative)==false AND $(Platform)!='AnyCPU'">
+    <Content Include="../../../out/build/$(Platform)-$(Configuration)/libminiprotoc/libminiprotoc.dll" CopyToOutputDirectory="Always" />
+    <Content Include="../../../out/build/$(Platform)-$(Configuration)/libminiprotoc/libprotobufd.dll" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IsWindows)==true AND $(BuildNative)==false AND $(Platform)=='AnyCPU'">
+    <Content Include="../../../out/build/x64-$(Configuration)/libminiprotoc/libminiprotoc.dll" CopyToOutputDirectory="Always" />
+    <Content Include="../../../out/build/x64-$(Configuration)/libminiprotoc/libprotobufd.dll" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="OmniSharp.Extensions.LanguageServer" Version="0.13.1" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.1.0" />
-
+    <ProjectReference Include="..\ConsoleApp\ConsoleApp.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\protoc\src\ConsoleApp\ConsoleApp.csproj" />
-  </ItemGroup>
 </Project>
