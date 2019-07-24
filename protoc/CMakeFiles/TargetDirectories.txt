@@ -1,7 +1,0 @@
-CMakeFiles/protoc.dir
-CMakeFiles/libprotobuf-lite.dir
-CMakeFiles/libprotoc.dir
-CMakeFiles/libprotobuf.dir
-CMakeFiles/INSTALL.dir
-CMakeFiles/ALL_BUILD.dir
-CMakeFiles/ZERO_CHECK.dir
