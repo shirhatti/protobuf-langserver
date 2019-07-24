@@ -34,7 +34,7 @@ namespace ProtobufExtension
             await Task.Yield();
 
             ProcessStartInfo info = new ProcessStartInfo();
-            var serverLocation = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "language-server", "src", "ProtobufLanguageServer", "bin", "Debug", "netcoreapp2.2", "ProtobufLanguageServer.dll");
+            var serverLocation = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "language-server", "src", "ProtobufLanguageServer", "bin", "Debug", "netcoreapp3.0", "ProtobufLanguageServer.dll");
             var absoluteServerPath = Path.GetFullPath((new Uri(serverLocation)).LocalPath);
             info.FileName = "dotnet";
             var args = string.Join(" ", absoluteServerPath, "-lsp");
