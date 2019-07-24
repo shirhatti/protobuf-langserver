@@ -5,12 +5,12 @@ namespace ProtobufLanguageServer.Syntax
 {
     public class SyntaxTree
     {
-        private SyntaxTree(Node root)
+        private SyntaxTree(RootNode root)
         {
             Root = root;
         }
         
-        public Node Root { get; }
+        public RootNode Root { get; }
 
         public static SyntaxTree Create(string path, SourceText text)
         {

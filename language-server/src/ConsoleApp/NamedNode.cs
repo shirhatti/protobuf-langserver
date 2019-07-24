@@ -6,21 +6,23 @@ namespace Protogen
 {
     public class NamedNode : Node
     {
-        private string _name;
+        private NameNode _name;
 
         public NamedNode(Location location, SourceText text) : base(location, text) { }
 
-        public string Name
+        public NameNode NameNode
         {
             get
             {
                 if (_name == null)
                 {
-                    _name = (Children.SingleOrDefault(c => c is NameNode) as NameNode)?.Name ?? string.Empty;
+                    _name = (Children.SingleOrDefault(c => c is NameNode) as NameNode);
                 }
 
                 return _name;
             }
         }
+
+        public string Name => NameNode.Name;
     }
 }

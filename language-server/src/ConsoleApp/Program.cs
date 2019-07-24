@@ -25,7 +25,7 @@ namespace ConsoleApp
             var ast = GetSyntaxTree("greet.proto", text);
         }
 
-        public static Node GetSyntaxTree(string path, SourceText text)
+        public static RootNode GetSyntaxTree(string path, SourceText text)
         {
             var chars = new char[text.Length];
             text.CopyTo(0, chars, 0, text.Length);
@@ -33,7 +33,7 @@ namespace ConsoleApp
             var inputFile = resolvedEncoding.GetBytes(chars);
             var nodes = new List<Node>();
             var lines = text.Lines;
-            Node ast = null;
+            RootNode ast = null;
             using (var inputSlab = new MemoryPoolSlab(inputFile))
             using (var outputSlab = new MemoryPoolSlab(new byte[1000000]))
             {
@@ -51,12 +51,13 @@ namespace ConsoleApp
                 {
                     if (ast == null)
                     {
-                        ast = node;
+                        ast = node as RootNode;
                     }
                     else
                     {
                         var targetNode = ast.GetNodeAt(node.StartLine, node.StartCol);
                         targetNode.Children.Add(node);
+                        node.Parent = targetNode;
                     }
                 }
             }

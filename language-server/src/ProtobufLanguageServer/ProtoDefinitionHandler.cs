@@ -5,6 +5,7 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using ProtobufLanguageServer.Documents;
 using Protogen;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Range = OmniSharp.Extensions.LanguageServer.Protocol.Models.Range;
@@ -60,7 +61,8 @@ namespace ProtobufLanguageServer
 
             if (child.Parent is MethodNode && (child is InputNode || child is OutputNode))
             {
-                var declaringTypeNode = FindDeclaringTypeNode(syntaxTree.Root, child.Content);
+                //var declaringTypeNode = FindDeclaringTypeNode(syntaxTree.Root, child.Content);
+                var declaringTypeNode = syntaxTree.Root.Messages.SingleOrDefault(c => c.Name == child.Content).NameNode;
                 if (declaringTypeNode != null)
                 {
                     var declaringTypeNodeLocation = new LocationOrLocationLink(
@@ -78,33 +80,6 @@ namespace ProtobufLanguageServer
 
             var emptyLocations = new LocationOrLocationLinks();
             return emptyLocations;
-        }
-
-        private Node FindDeclaringTypeNode(Node node, string content)
-        {
-            if (node is MessageNode messageNode)
-            {
-                var delcaringMessageType = messageNode.NameNode;
-
-                if (delcaringMessageType.Name == content)
-                {
-                    // Found
-                    return delcaringMessageType;
-                }
-            }
-
-            for (var i = 0; i < node.Children.Count; i++)
-            {
-                var foundNode = FindDeclaringTypeNode(node.Children[i], content);
-
-                if (foundNode != null)
-                {
-                    // Found
-                    return foundNode;
-                }
-            }
-
-            return null;
         }
 
         public void SetCapability(DefinitionCapability capability)
