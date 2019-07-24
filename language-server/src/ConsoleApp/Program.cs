@@ -31,13 +31,12 @@ namespace ConsoleApp
             text.CopyTo(0, chars, 0, text.Length);
             var resolvedEncoding = text.Encoding ?? Encoding.UTF8;
             var inputFile = resolvedEncoding.GetBytes(chars);
-            var infoList = new List<NodeInfo>();
+            var nodes = new List<Node>();
             var lines = text.Lines;
             Node ast = null;
             using (var inputSlab = new MemoryPoolSlab(inputFile))
             using (var outputSlab = new MemoryPoolSlab(new byte[1000000]))
             {
-
                 var parseStatus = generate(inputSlab.NativePointer, inputFile.Length, outputSlab.NativePointer, out var descriptorSize);
                 var byteArray = new byte[descriptorSize];
                 Marshal.Copy(outputSlab.NativePointer, byteArray, 0, (int)descriptorSize);
@@ -45,45 +44,19 @@ namespace ConsoleApp
 
                 foreach (var location in file.SourceCodeInfo.LocationList)
                 {
-                    var info = new NodeInfo
-                    {
-                        StartLine = location.SpanList[0],
-                        StartCol = location.SpanList[1],
-                        EndLine = location.SpanCount == 3 ? location.SpanList[0] : location.SpanList[2],
-                        EndCol = location.SpanCount == 3 ? location.SpanList[2] : location.SpanList[3],
-                        File = file.Name
-                    };
-
-                    info.ResolvePath(location.PathList);
-
-                    if (info.Type == "label")
-                    {
-                        // There's a bug in protobuf where labels in version 3 isn't parsed correctly
-                        info.EndLine = info.StartLine;
-                        info.EndCol = lines[info.StartLine].ToString().Length - 1;
-                    }
-
-                    info.ResolveContent(lines);
-
-
-                    infoList.Add(info);
+                    nodes.Add(Node.CreateNode(location, text));
                 }
 
-                foreach (var info in infoList.OrderByDescending(i => i.Content.Length))
+                foreach (var node in nodes.OrderByDescending(i => i.Content.Length))
                 {
-
                     if (ast == null)
                     {
-                        ast = new Node { Info = info };
+                        ast = node;
                     }
                     else
                     {
-                        var node = ast.GetChildNodeAt(info.StartLine, info.StartCol);
-                        node.Children.Add(new Node
-                        {
-                            Info = info,
-                            Parent = node
-                        });
+                        var targetNode = ast.GetNodeAt(node.StartLine, node.StartCol);
+                        targetNode.Children.Add(node);
                     }
                 }
             }

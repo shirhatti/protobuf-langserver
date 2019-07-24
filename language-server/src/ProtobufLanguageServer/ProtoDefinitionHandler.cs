@@ -5,7 +5,6 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using ProtobufLanguageServer.Documents;
 using Protogen;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Range = OmniSharp.Extensions.LanguageServer.Protocol.Models.Range;
@@ -57,9 +56,9 @@ namespace ProtobufLanguageServer
 
             var syntaxTree = await document.GetSyntaxTreeAsync();
 
-            var child = syntaxTree.Root.GetChildNodeAt((int)request.Position.Line, (int)request.Position.Character);
+            var child = syntaxTree.Root.GetNodeAt((int)request.Position.Line, (int)request.Position.Character);
 
-            if (child.Parent.Info.Type == "method" && (child.Info.Type == "input_type" || child.Info.Type == "output_type"))
+            if (child.Parent is MethodNode && (child is InputNode || child is OutputNode))
             {
                 var declaringTypeNode = FindDeclaringTypeNode(syntaxTree.Root, child.Info.Content);
                 if (declaringTypeNode != null)
@@ -83,11 +82,11 @@ namespace ProtobufLanguageServer
 
         private Node FindDeclaringTypeNode(Node node, string content)
         {
-            if (node.Info.Type == "message_type")
+            if (node is MessageNode messageNode)
             {
-                var delcaringMessageType = node.Children.FirstOrDefault(c => c.Info.Type == "name" && c.Info.Content == content);
+                var delcaringMessageType = messageNode.NameNode;
 
-                if (delcaringMessageType != null)
+                if (delcaringMessageType.Name == content)
                 {
                     // Found
                     return delcaringMessageType;
