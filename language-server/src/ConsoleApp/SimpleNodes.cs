@@ -4,10 +4,6 @@ using static Google.ProtocolBuffers.DescriptorProtos.SourceCodeInfo.Types;
 
 namespace Protogen
 {
-    public class RootNode : Node
-    {
-        public RootNode(Location location, SourceText text) : base(location, text) { }
-    }
 
     public class SyntaxNode : Node
     {
@@ -46,19 +42,17 @@ namespace Protogen
         public PackageNode(Location location, SourceText text) : base(location, text) { }
     }
 
-    public class MessageNode : Node
+    public class MessageNode : NamedNode
     {
         public MessageNode(Location location, SourceText text) : base(location, text) { }
-
-        public NameNode NameNode => Children.SingleOrDefault(c => c is NameNode) as NameNode;
     }
 
-    public class ServiceNode : Node
+    public class ServiceNode : NamedNode
     {
         public ServiceNode(Location location, SourceText text) : base(location, text) { }
     }
 
-    public class MethodNode : Node
+    public class MethodNode : NamedNode
     {
         public MethodNode(Location location, SourceText text) : base(location, text) { }
     }

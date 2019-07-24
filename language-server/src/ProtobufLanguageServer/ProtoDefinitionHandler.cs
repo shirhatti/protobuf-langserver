@@ -60,15 +60,15 @@ namespace ProtobufLanguageServer
 
             if (child.Parent is MethodNode && (child is InputNode || child is OutputNode))
             {
-                var declaringTypeNode = FindDeclaringTypeNode(syntaxTree.Root, child.Info.Content);
+                var declaringTypeNode = FindDeclaringTypeNode(syntaxTree.Root, child.Content);
                 if (declaringTypeNode != null)
                 {
                     var declaringTypeNodeLocation = new LocationOrLocationLink(
                         new Location()
                         {
                             Range = new Range(
-                                new Position(declaringTypeNode.Info.StartLine, declaringTypeNode.Info.StartCol),
-                                new Position(declaringTypeNode.Info.EndLine, declaringTypeNode.Info.EndCol)),
+                                new Position(declaringTypeNode.StartLine, declaringTypeNode.StartCol),
+                                new Position(declaringTypeNode.EndLine, declaringTypeNode.EndCol)),
                             Uri = request.TextDocument.Uri,
                         });
                     var locations = new LocationOrLocationLinks(declaringTypeNodeLocation);
