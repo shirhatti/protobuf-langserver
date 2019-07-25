@@ -10,6 +10,14 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- script: |
+    git clone https://github.com/Microsoft/vcpkg
+    .\vcpkg\bootstrap-vcpkg.bat
+  displayName: Bootstrap vcpkg
+- script: .\vcpkg\vcpkg.exe install protobuf:x86-windows protobuf:x64-windows
+  displayName: vcpkg install dependencies
+- script: mkdir libminiprotoc\build
+  displayName: Make Build Directory
 - task: CMake@1
   inputs:
     workingDirectory: 'libminiprotoc/build'
